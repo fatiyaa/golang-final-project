@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import axios from 'axios';
 import { useRouter } from 'next/navigation';
+import Link from 'next/link';
 
 type SignUpForm = {
   name: string;
@@ -36,52 +37,80 @@ export default function SignUpPage() {
   };
 
   return (
-    <div>
-      <h1>Sign Up</h1>
-      <form onSubmit={handleSubmit(onSubmit)}>
-        <div>
-          <label>Name </label>
-          <input
-            {...register('name', { required: 'Name is required' })}
-            placeholder="Name"
-          />
-          {errors.name && <p>{errors.name.message}</p>}
-        </div>
-        
-        <div>
-          <label>Email </label>
-          <input
-            {...register('email', { required: 'Email is required', pattern: { value: /^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$/, message: 'Invalid email address' } })}
-            placeholder="Email"
-            type="email"
-          />
-          {errors.email && <p>{errors.email.message}</p>}
-        </div>
-
-        <div>
-          <label>Phone Number </label>
-          <input
-            {...register('telp_number', { required: 'Phone number is required', pattern: { value: /^[0-9]+$/, message: 'Phone number must be numeric' } })}
-            placeholder="Phone Number"
-          />
-          {errors.telp_number && <p>{errors.telp_number.message}</p>}
-        </div>
-
-        <div>
-          <label>Password </label>
-          <input
-            {...register('password', { required: 'Password is required', minLength: { value: 3, message: 'Password must be at least 3 characters' } })}
-            placeholder="Password"
-            type="password"
-          />
-          {errors.password && <p>{errors.password.message}</p>}
-        </div>
-
-        <button type="submit">Sign Up</button>
-      </form>
-
-      {errorMessage && <p style={{ color: 'red' }}>{errorMessage}</p>}
-      {successMessage && <p style={{ color: 'green' }}>{successMessage}</p>}
+    <section className="bg-gray-50 dark:bg-gray-900">
+    <div className="flex flex-col items-center justify-center px-6 py-8 mx-auto md:h-screen lg:py-0">
+      <div className="px-6 py-8 w-full bg-white rounded-lg shadow dark:border md:mt-0 sm:max-w-md dark:bg-gray-800 dark:border-gray-700">
+        <h1 className="text-xl font-bold leading-tight tracking-tight text-gray-900 md:text-2xl dark:text-white">Sign Up</h1>
+        <form onSubmit={handleSubmit(onSubmit)} className="space-y-4 pt-5">
+          <div>
+            <label htmlFor="name" className="block mb-2 text-sm font-medium dark:text-white">Name</label>
+            <input
+              {...register('name', { required: 'Name is required' })}
+              placeholder="Name"
+              className="w-full p-3 border rounded-lg bg-white dark:bg-gray-700 text-black dark:text-white border-gray-300 dark:border-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            />
+            {errors.name && <p className="text-red-500 text-sm mt-1">{errors.name.message}</p>}
+          </div>
+          
+          <div>
+            <label htmlFor="email" className="block mb-2 text-sm font-medium dark:text-white">Email</label>
+            <input
+              {...register('email', { 
+                required: 'Email is required', 
+                pattern: { value: /^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$/, message: 'Invalid email address' } 
+              })}
+              placeholder="Email"
+              type="email"
+              className="w-full p-3 border rounded-lg bg-white dark:bg-gray-700 text-black dark:text-white border-gray-300 dark:border-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            />
+            {errors.email && <p className="text-red-500 text-sm mt-1">{errors.email.message}</p>}
+          </div>
+  
+          <div>
+            <label htmlFor="telp_number" className="block mb-2 text-sm font-medium dark:text-white">Phone Number</label>
+            <input
+              {...register('telp_number', { 
+                required: 'Phone number is required', 
+                pattern: { value: /^[0-9]+$/, message: 'Phone number must be numeric' } 
+              })}
+              placeholder="Phone Number"
+              className="w-full p-3 border rounded-lg bg-white dark:bg-gray-700 text-black dark:text-white border-gray-300 dark:border-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            />
+            {errors.telp_number && <p className="text-red-500 text-sm mt-1">{errors.telp_number.message}</p>}
+          </div>
+  
+          <div>
+            <label htmlFor="password" className="block mb-2 text-sm font-medium dark:text-white">Password</label>
+            <input
+              {...register('password', { 
+                required: 'Password is required', 
+                minLength: { value: 3, message: 'Password must be at least 3 characters' } 
+              })}
+              placeholder="Password"
+              type="password"
+              className="w-full p-3 border rounded-lg bg-white dark:bg-gray-700 text-black dark:text-white border-gray-300 dark:border-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            />
+            {errors.password && <p className="text-red-500 text-sm mt-1">{errors.password.message}</p>}
+          </div>
+  
+          <button
+            type="submit"
+            className="w-full p-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
+          >
+            Sign Up
+          </button>
+        </form>
+  
+        <p className="mt-4 text-center text-sm text-gray-600 dark:text-gray-400">
+          Already have an account?{' '}
+          <Link href="/login" className="text-blue-600 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-500">
+            Login here
+          </Link>
+        </p>
+        {errorMessage && <p className="mt-4 text-red-500">{errorMessage}</p>}
+        {successMessage && <p className="mt-4 text-green-500">{successMessage}</p>}
+      </div>
     </div>
+  </section>
   );
 }
