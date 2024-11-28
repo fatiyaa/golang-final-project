@@ -4,6 +4,7 @@ import { useForm } from 'react-hook-form';
 import axios from 'axios';
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
+import Cookies from 'js-cookie';
 import Link from 'next/link';
 
 type LoginForm = {
@@ -22,7 +23,9 @@ export default function LoginPage() {
         const response = await axios.post('http://localhost:8888/api/user/login', data);
         console.log(response); // Check the response data
         if (response.status === 200) {
-            // router.push('/dashboard'); // Redirect on success
+          Cookies.set('auth_token', response.data.token, { expires: 7, secure: true, path: '/', sameSite: 'Strict' });
+            Cookies.set('user', JSON.stringify(response.data.user)); // Set the user in cookie
+            router.push('/dashboard'); // Redirect on success
         }
     } catch (err: any) {
         console.log(err);
