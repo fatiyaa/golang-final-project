@@ -1,43 +1,47 @@
 [
-    {
-      "name": "Grand Hotel Jakarta",
-      "location": "Jakarta, Indonesia",
-      "phone_number": "02112345678",
-      "email": "contact@grandhoteljakarta.com",
-      "rating": 4.5,
-      "description": "Luxury hotel with top-class facilities and an amazing city view."
-    },
-    {
-      "name": "Beach Resort Bali",
-      "location": "Bali, Indonesia",
-      "phone_number": "03619876543",
-      "email": "info@beachresortbali.com",
-      "rating": 4.7,
-      "description": "A serene beachfront resort offering a tranquil escape."
-    },
-    {
-      "name": "City Inn Bandung",
-      "location": "Bandung, Indonesia",
-      "phone_number": "0221112233",
-      "email": "reservations@cityinnbandung.com",
-      "rating": 3.9,
-      "description": "A budget-friendly hotel in the heart of the city."
-    },
-    {
-      "name": "Mountain Lodge",
-      "location": "Puncak, Indonesia",
-      "phone_number": "0255556666",
-      "email": "support@mountainlodge.com",
-      "rating": 4.3,
-      "description": "A cozy mountain retreat for nature lovers and adventure seekers."
-    },
-    {
-      "name": "Luxury Palace Hotel",
-      "location": "Surabaya, Indonesia",
-      "phone_number": "03123456789",
-      "email": "contact@luxurypalacehotel.com",
-      "rating": 5.0,
-      "description": "A 5-star hotel offering world-class amenities and unmatched service."
-    }
-  ]
-  
+  {
+    "name": "Grand Plaza Hotel",
+    "city": "Jakarta",
+    "address": "Jl. Sudirman No. 123, Jakarta",
+    "phone_number": "021 12345678",
+    "email": "contact@grandplazahotel.com",
+    "rating": 4.5,
+    "description": "A luxurious hotel in the heart of Jakarta offering premium services."
+  },
+  {
+    "name": "Sunset Resort",
+    "city": "Bali",
+    "address": "Jl. Pantai Kuta, Bali",
+    "phone_number": "0361 2345678",
+    "email": "info@sunsetresortbali.com",
+    "rating": 4.8,
+    "description": "A beachfront resort offering serene views and world-class amenities."
+  },
+  {
+    "name": "Mountain View Hotel",
+    "city": "Bandung",
+    "address": "Jl. Dago No. 99, Bandung",
+    "phone_number": "022 7654321",
+    "email": "contact@mountainviewhotelbandung.com",
+    "rating": 4.2,
+    "description": "A cozy hotel with a scenic mountain view and family-friendly atmosphere."
+  },
+  {
+    "name": "Ocean Breeze Inn",
+    "city": "Surabaya",
+    "address": "Jl. Laut No. 56, Surabaya",
+    "phone_number": "031 9876543",
+    "email": "reservations@oceanbreezeinn.com",
+    "rating": 4.3,
+    "description": "An affordable hotel with a relaxing ocean view and great amenities."
+  },
+  {
+    "name": "City Center Hotel",
+    "city": "Yogyakarta",
+    "address": "Jl. Malioboro No. 100, Yogyakarta",
+    "phone_number": "0274 1122334",
+    "email": "info@citycenterhotelyogya.com",
+    "rating": 4.7,
+    "description": "A modern hotel located near the city center with convenient access to attractions."
+  }
+]
