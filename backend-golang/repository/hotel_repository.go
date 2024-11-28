@@ -2,6 +2,7 @@ package repository
 
 import (
 	"context"
+	"math"
 
 	"github.com/fatiyaa/golang-final-project/dto"
 	"github.com/fatiyaa/golang-final-project/entity"
@@ -80,11 +81,15 @@ func (r *hotelRepository) GetAllHotel(ctx context.Context, tx *gorm.DB, req dto.
 		return dto.GetHotelRepositoryResponse{}, err
 	}
 
+	totalPage := int64(math.Ceil(float64(count) / float64(req.PerPage)))
+
+
 	return dto.GetHotelRepositoryResponse{
 		Hotels: hotels,
 		PaginationResponse: dto.PaginationResponse{
 			Page:    req.Page,
 			PerPage: req.PerPage,
+			MaxPage: totalPage,
 			Count:   count,
 		},
 	}, nil
