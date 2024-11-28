@@ -1,0 +1,43 @@
+[
+    {
+      "user_id": 1,
+      "room_id": 1,
+      "status": "PENDING",
+      "date_start": "2024-01-10",
+      "date_end": "2024-01-15",
+      "note": "Requested early check-in if available."
+    },
+    {
+      "user_id": 2,
+      "room_id": 2,
+      "status": "BOOKED",
+      "date_start": "2024-01-12",
+      "date_end": "2024-01-16",
+      "note": "Booked for a business trip."
+    },
+    {
+      "user_id": 3,
+      "room_id": 3,
+      "status": "CHECKED_IN",
+      "date_start": "2024-01-05",
+      "date_end": "2024-01-08",
+      "note": "Stayed for a weekend getaway."
+    },
+    {
+      "user_id": 1,
+      "room_id": 4,
+      "status": "CHECKED_OUT",
+      "date_start": "2024-01-01",
+      "date_end": "2024-01-03",
+      "note": "Checked out early due to work commitments."
+    },
+    {
+      "user_id": 2,
+      "room_id": 5,
+      "status": "CANCELED",
+      "date_start": "2024-02-01",
+      "date_end": "2024-02-05",
+      "note": "Reservation canceled due to change in travel plans."
+    }
+  ]
+  

@@ -15,6 +15,8 @@ type User struct {
 	ImageUrl   string `json:"image_url"`
 	IsVerified bool   `json:"is_verified"`
 
+	Orders []Order `json:"orders"`
+
 	Timestamp
 }
 

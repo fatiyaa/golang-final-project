@@ -1,0 +1,43 @@
+[
+    {
+      "name": "Grand Hotel Jakarta",
+      "location": "Jakarta, Indonesia",
+      "phone_number": "02112345678",
+      "email": "contact@grandhoteljakarta.com",
+      "rating": 4.5,
+      "description": "Luxury hotel with top-class facilities and an amazing city view."
+    },
+    {
+      "name": "Beach Resort Bali",
+      "location": "Bali, Indonesia",
+      "phone_number": "03619876543",
+      "email": "info@beachresortbali.com",
+      "rating": 4.7,
+      "description": "A serene beachfront resort offering a tranquil escape."
+    },
+    {
+      "name": "City Inn Bandung",
+      "location": "Bandung, Indonesia",
+      "phone_number": "0221112233",
+      "email": "reservations@cityinnbandung.com",
+      "rating": 3.9,
+      "description": "A budget-friendly hotel in the heart of the city."
+    },
+    {
+      "name": "Mountain Lodge",
+      "location": "Puncak, Indonesia",
+      "phone_number": "0255556666",
+      "email": "support@mountainlodge.com",
+      "rating": 4.3,
+      "description": "A cozy mountain retreat for nature lovers and adventure seekers."
+    },
+    {
+      "name": "Luxury Palace Hotel",
+      "location": "Surabaya, Indonesia",
+      "phone_number": "03123456789",
+      "email": "contact@luxurypalacehotel.com",
+      "rating": 5.0,
+      "description": "A 5-star hotel offering world-class amenities and unmatched service."
+    }
+  ]
+  
