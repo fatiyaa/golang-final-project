@@ -14,5 +14,30 @@
     "password": "user1234",
     "role": "user",
     "is_verified": true
-  }
+  },
+    {
+      "name": "John Doe",
+      "telp_number": "081234567890",
+      "email": "johndoe@example.com",
+      "password": "hashedpassword1",
+      "role": "admin",
+      "is_verified": true
+    },
+    {
+      "name": "Jane Smith",
+      "telp_number": "089876543210",
+      "email": "janesmith@example.com",
+      "password": "hashedpassword2",
+      "role": "user",
+      "is_verified": true
+    },
+    {
+      "name": "Michael Johnson",
+      "telp_number": "083456789012",
+      "email": "michaelj@example.com",
+      "password": "hashedpassword3",
+      "role": "user",
+      "is_verified": true
+    }
+  
 ]
