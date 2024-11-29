@@ -73,7 +73,7 @@ func (r *roomRepository) GetAllRoom(ctx context.Context, tx *gorm.DB, req dto.Pa
 	tx = tx.WithContext(ctx)
 	tx.Model(&entity.Room{}).Count(&count)
 
-	if err = tx.WithContext(ctx).Limit(req.PerPage).Offset((req.Page - 1) * req.PerPage).Find(&rooms).Error; err != nil {
+	if err = tx.WithContext(ctx).Preload("Hotel").Limit(req.PerPage).Offset((req.Page - 1) * req.PerPage).Find(&rooms).Error; err != nil {
 		return dto.GetRoomRepositoryResponse{}, err
 	}
 

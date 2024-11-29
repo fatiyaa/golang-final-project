@@ -34,16 +34,19 @@ func main() {
 		userRepository repository.UserRepository = repository.NewUserRepository(db)
 		hotelRepository repository.HotelRepository = repository.NewHotelRepository(db)
 		roomRepository repository.RoomRepository = repository.NewRoomRepository(db)
+		orderRepository repository.OrderRepository = repository.NewOrderRepository(db)
 
 		// Service
 		userService service.UserService = service.NewUserService(userRepository, jwtService)
 		hotelService service.HotelService = service.NewHotelService(hotelRepository)
 		roomService service.RoomService = service.NewRoomService(roomRepository)
+		orderService service.OrderService = service.NewOrderService(orderRepository)
 
 		// Controller
 		userController controller.UserController = controller.NewUserController(userService)
 		hotelController controller.HotelController = controller.NewHotelController(hotelService)
 		roomController controller.RoomController = controller.NewRoomController(roomService)
+		orderController controller.OrderController = controller.NewOrderController(orderService)
 	)
 
 	server := gin.Default()
@@ -53,6 +56,7 @@ func main() {
 	routes.User(server, userController, jwtService)
 	routes.Hotel(server, hotelController, jwtService)
 	routes.Room(server, roomController, jwtService)
+	routes.Order(server, orderController, jwtService)
 
 	server.Static("/assets", "./assets")
 	port := os.Getenv("PORT")

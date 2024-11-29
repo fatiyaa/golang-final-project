@@ -32,4 +32,14 @@ const (
 
 	MESSAGE_SUCCESS_DELETE_ROOM = "Room successfully deleted"
 	MESSAGE_FAILED_DELETE_ROOM  = "Failed to delete room"
+
+	// Order
+	MESSAGE_SUCCESS_CREATE_ORDER = "Order successfully created"
+	MESSAGE_FAILED_CREATE_ORDER  = "Failed to create order"
+
+	MESSAGE_SUCCESS_GET_ORDERS = "Successfully get list of orders"
+	MESSAGE_FAILED_GET_ORDERS  = "Failed to get list of orders"
+
+	MESSAGE_SUCCESS_GET_ORDER = "Successfully get order"
+	MESSAGE_FAILED_GET_ORDER  = "Failed to get order"
 )

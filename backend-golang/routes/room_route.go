@@ -12,8 +12,8 @@ func Room(route *gin.Engine, roomController controller.RoomController, jwtServic
 	{
 		routes.POST("", middleware.Authenticate(jwtService), roomController.CreateRoom)
 		routes.PUT("/:id", middleware.Authenticate(jwtService), roomController.UpdateRoom)
-		routes.GET("", middleware.Authenticate(jwtService), roomController.GetAllRoom)
-		routes.GET("/:id", middleware.Authenticate(jwtService), roomController.GetRoomById)
+		routes.GET("", roomController.GetAllRoom)
+		routes.GET("/:id", roomController.GetRoomById)
 		routes.DELETE("/:id", middleware.Authenticate(jwtService), roomController.DeleteRoom)
 	}
 }

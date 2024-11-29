@@ -12,8 +12,8 @@ func Hotel(route *gin.Engine, hotelController controller.HotelController, jwtSer
 	{
 		routes.POST("", middleware.Authenticate(jwtService), hotelController.Register)
 		routes.PUT("/:id", middleware.Authenticate(jwtService), hotelController.Update)
-		routes.GET("", middleware.Authenticate(jwtService), hotelController.GetAllHotel)
-		routes.GET("/:id", middleware.Authenticate(jwtService), hotelController.GetHotelById)
+		routes.GET("", hotelController.GetAllHotel)
+		routes.GET("/:id", hotelController.GetHotelById)
 		routes.DELETE("/:id", middleware.Authenticate(jwtService), hotelController.Delete)
 	}
 }
