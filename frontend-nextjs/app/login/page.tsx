@@ -16,6 +16,7 @@ export default function LoginPage() {
   const { register, handleSubmit, formState: { errors } } = useForm<LoginForm>();
   const [error, setError] = useState<string | null>(null);
   const router = useRouter();
+  const {push, back} = useRouter();
 
   const onSubmit = async (data: LoginForm) => {
     try {
@@ -34,9 +35,25 @@ export default function LoginPage() {
   };
 
   return (
-<section className="bg-gray-50 dark:bg-gray-900">
+  <section className="bg-gray-50 dark:bg-gray-900">
     <div className="flex flex-col items-center justify-center px-6 py-8 mx-auto md:h-screen lg:py-0">
       <div className="px-6 py-8 w-full bg-white rounded-lg shadow dark:border md:mt-0 sm:max-w-md dark:bg-gray-800 dark:border-gray-700">
+        <button onClick={() => back()} className="top-6 left-6 p-2 mb-3 bg-gray-100 dark:bg-gray-700 rounded-full hover:bg-gray-200 dark:hover:bg-gray-600">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+              className="w-5 h-5 text-gray-800 dark:text-white"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth="2"
+                d="M15 19l-7-7 7-7"
+              />
+            </svg>
+        </button>
         <h1 className="text-xl font-bold leading-tight tracking-tight text-gray-900 md:text-2xl dark:text-white">Log In</h1>
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4 pt-5">
           <div>
@@ -77,7 +94,7 @@ export default function LoginPage() {
         <p className="mt-4 text-center text-sm text-gray-600 dark:text-gray-400">
             Don't have an account?{' '}
             <Link href="/signup" className="text-blue-600 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-500">
-              Create here
+              Register here
             </Link>
           </p>
         {error && <p className="mt-4 text-red-500">{error}</p>}

@@ -19,3 +19,17 @@ body {
   background: var(--background);
   font-family: Arial, Helvetica, sans-serif;
 }
+
+body::-webkit-scrollbar {
+  display: none; /* Hide scrollbar in WebKit-based browsers */
+}
+/* Optional: Ensure the header transitions smoothly */
+header {
+  transition: transform 0.3s ease-in-out, opacity 0.3s ease-in-out,
+    box-shadow 0.3s ease-in-out;
+}
+
+header.hidden {
+  transform: translateY(-100%);
+  opacity: 0;
+}
