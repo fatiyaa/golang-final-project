@@ -6,14 +6,13 @@ import { format } from 'date-fns';
 import 'react-date-range/dist/styles.css';
 import 'react-date-range/dist/theme/default.css';
 
-export default function CalendarPopup() {
-  const [isOpen, setIsOpen] = useState(false);
-  const [selectedDates, setSelectedDates] =  useState<Range>({
-    startDate: new Date(),
-    endDate: new Date(),
-    key: 'selection',
-  });
+interface CalendarPopupProps {
+  selectedDates: Range;
+  setSelectedDates: React.Dispatch<React.SetStateAction<Range>>;
+}
 
+export default function CalendarPopup({ selectedDates, setSelectedDates }: CalendarPopupProps) {
+  const [isOpen, setIsOpen] = useState(false);
   return (
     <div className="relative">
       {/* Date Selector Button */}

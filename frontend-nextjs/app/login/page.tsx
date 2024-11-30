@@ -24,9 +24,11 @@ export default function LoginPage() {
         const response = await axios.post('http://localhost:8888/api/user/login', data);
         console.log(response); // Check the response data
         if (response.status === 200) {
-          Cookies.set('auth_token', response.data.token, { expires: 7, secure: true, path: '/', sameSite: 'Strict' });
-            Cookies.set('user', JSON.stringify(response.data.user)); // Set the user in cookie
-            router.push('/dashboard'); // Redirect on success
+          const token = response.data.data.token;
+          console.log(token);
+          Cookies.set('auth_token', token, { expires: 7, secure: true, path: '/', sameSite: 'Strict' });
+          Cookies.set('user', JSON.stringify(response.data.user)); // Set the user in cookie
+          router.push('/dashboard'); // Redirect on success
         }
     } catch (err: any) {
         console.log(err);

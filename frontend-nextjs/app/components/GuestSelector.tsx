@@ -2,7 +2,6 @@
 
 import { useState } from 'react';
 
-// Define the type for the guests state
 interface Guests {
   rooms: number;
   adults: number;
@@ -10,24 +9,21 @@ interface Guests {
   infants: number;
 }
 
-export default function GuestSelector() {
+interface GuestSelectorProps {
+  guests: Guests;
+  setGuests: React.Dispatch<React.SetStateAction<Guests>>;
+}
+
+export default function GuestSelector({ guests, setGuests }: GuestSelectorProps) {
   const [isOpen, setIsOpen] = useState(false);
   
-  // Explicitly define the type of guests
-  const [guests, setGuests] = useState<Guests>({
-    rooms: 0,
-    adults: 0,
-    children: 0,
-    infants: 0,
-  });
-
-  // Modify the function to accept the correct types
   const handleGuestChange = (type: keyof Guests, operation: 'increment' | 'decrement') => {
     setGuests((prev) => ({
       ...prev,
       [type]: operation === 'increment' ? prev[type] + 1 : Math.max(prev[type] - 1, 0),
     }));
   };
+
 
   return (
     <div className="relative">
