@@ -28,7 +28,7 @@ export default function LoginPage() {
           console.log(token);
           Cookies.set('auth_token', token, { expires: 7, secure: true, path: '/', sameSite: 'Strict' });
           Cookies.set('user', JSON.stringify(response.data.user)); // Set the user in cookie
-          router.push('/dashboard'); // Redirect on success
+          router.push('/reservation'); // Redirect on success
         }
     } catch (err: any) {
         console.log(err);

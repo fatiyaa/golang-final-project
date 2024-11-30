@@ -1,24 +1,54 @@
 'use client';
 
-import { use, useEffect, useState } from 'react';
-import { useRouter, useParams  } from 'next/navigation'; 
+import { useEffect, useState } from 'react';
+import { useRouter, useParams, useSearchParams } from 'next/navigation';
+import { Range } from 'react-date-range';  // Import Range from react-date-range
 import Cookies from 'js-cookie';
 import axios from 'axios';
+import { set } from 'date-fns';
+
+interface Guests {
+  rooms: number;
+  adults: number;
+  children: number;
+  infants: number;
+}
 
 const RoomDetails = () => {
   const router = useRouter();
   
-  // Access dynamic route parameter from router.params
-  const id = useParams().id;
+  const { id } = useParams();
+  
+  const searchParams = useSearchParams();
+  const guests = searchParams.get('guests');
+  const selectedDates = searchParams.get('selectedDates');
 
   const [roomDetails, setRoomDetails] = useState<any | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [isFloating, setIsFloating] = useState<boolean>(false);
   const token = Cookies.get('auth_token');
 
-  useEffect(() => {
-    if (!id) return; // Guard clause for missing id
+  const [guestList, setGuestList] = useState<Guests>({
+    rooms: 0,
+    adults: 0,
+    children: 0,
+    infants: 0,
+  });
+  const [dates, setDates] = useState<Range>({
+    startDate: new Date(),
+    endDate: new Date(),
+    key: 'selection',
+  });
 
+  useEffect(() => {
+    // Parse guests and selectedDates from query string
+    if (guests) {
+      setGuestList(JSON.parse(guests));
+    }
+
+    if (selectedDates) {
+      setDates(JSON.parse(selectedDates));
+    }
 
     const fetchRoomDetails = async () => {
       try {
@@ -39,9 +69,8 @@ const RoomDetails = () => {
         setLoading(false);  // Set loading to false after the request completes
       }
     };
-
     fetchRoomDetails();
-  }, [id]);
+  }, [id, guests, selectedDates]);
 
   const postOrder = async () => {
     try {
@@ -67,8 +96,46 @@ const RoomDetails = () => {
     }
   };
 
+  const formatDate = (dateString: string) => {
+    const date = new Date(dateString);
+    return date.toLocaleDateString('en-GB', {
+      day: '2-digit',
+      month: 'short',
+      year: 'numeric',
+    });
+  };
+
+  const calculateNights = (startDate: string, endDate: string): number => {
+    const start = new Date(startDate);
+    const end = new Date(endDate);
+  
+    // Calculate the difference in time (milliseconds)
+    const differenceInTime = end.getTime() - start.getTime();
+  
+    // Convert time difference to days (1 day = 86400000 ms)
+    const differenceInDays = differenceInTime / (1000 * 3600 * 24);
+  
+    // If the difference is 0, it means the check-in and check-out are on the same day, so we should count it as 1 night
+    return differenceInDays < 1 ? 1 : Math.ceil(differenceInDays);
+  };
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      const modal = document.getElementById('floatingModal');
+      if (modal && !modal.contains(event.target as Node)) {
+        setIsFloating(false);  
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, []);
+
   if (loading) return <div>Loading room details...</div>;
-  if (!roomDetails) return <div>Room not found</div>;  // Show error if no room details are found
+  if (!roomDetails) return <div>Room not found</div>;  
 
   return (
     <div className='flex flex-col items-center mt-4'>
@@ -143,7 +210,7 @@ const RoomDetails = () => {
         className={`fixed inset-0 flex justify-center items-center bg-opacity-70 bg-black p-6 transition-opacity ${isFloating ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}
         style={{ transitionDuration: '300ms' }}
       >
-        <div className="w-full max-w-3xl p-6 rounded-xl bg-white gap-1">
+        <div id="floatingModal" className="w-full max-w-3xl p-6 rounded-xl bg-white gap-1">
           <button type="button" className="sticky top-0 z-10 flex w-full items-center gap-4 border-none bg-white p-4 pl-0 shadow-sm" onClick={() => setIsFloating(!isFloating)} >
             <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 -960 960 960" className="h-4 w-4 shrink-0 text-gray-800">
             <path d="M655-80 255-480l400-400 56 57-343 343 343 343z">
@@ -171,8 +238,8 @@ const RoomDetails = () => {
           </div>
           <div className="mt-10 text-gray-800">
             <p className="text-left text-sm font-semibold uppercase leading-6 tracking-[0.044rem] text-gray-800/50">Stay Information</p>
-            <p className="border-b border-b-gray-100 py-4 text-left text-sm font-medium leading-5">01 Dec 2024 - 02 Dec 2024, 1 Night</p>
-            <p className="border-b border-b-gray-100 py-4 text-left text-sm font-medium leading-5">1 Room · 1 Adult</p>
+            <p className="border-b border-b-gray-100 py-4 text-left text-sm font-medium leading-5">{formatDate(dates.startDate)} - {formatDate(dates.endDate)} , {calculateNights(dates.startDate, dates.endDate)} Night</p>
+            <p className="border-b border-b-gray-100 py-4 text-left text-sm font-medium leading-5">{guestList.rooms} Room · {guestList.adults} Adult</p>
             <div className="border-b border-b-gray-100 py-5">
               <div className="flex items-start gap-2">
               <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 -960 960 960" className="h-5 w-5 shrink-0 fill-current text-red-500">
@@ -190,19 +257,19 @@ const RoomDetails = () => {
               <p className="text-left text-sm font-semibold uppercase leading-5 tracking-[0.038rem] text-gray-800/50">Price Summary</p>
               <div className="flex items-center justify-between gap-3 border-b border-b-gray-100 py-5">
                 <div className="flex items-center gap-4">
-                  <div className="text-sm font-medium leading-[1.375rem] text-gray-800">1 Room x 1 Night
+                  <div className="text-sm font-medium leading-[1.375rem] text-gray-800">{guestList.rooms} Room x {calculateNights(dates.startDate, dates.endDate)} Night
                   </div>
                 </div>
-                <div className="text-sm font-medium leading-[1.375rem] text-gray-800">Rp {new Intl.NumberFormat('id-ID').format(roomDetails.base_price)}
+                <div className="text-sm font-medium leading-[1.375rem] text-gray-800">Rp {new Intl.NumberFormat('id-ID').format(roomDetails.base_price * guestList.rooms * calculateNights(dates.startDate, dates.endDate))}
                 </div>
               </div>
               <div className="flex items-center justify-between border-b border-b-gray-100 py-5 text-sm font-medium text-gray-800">
                 <p className="leading-[1.375rem]">Tax &amp; Fees</p>
-                <p className="leading-[1.375rem]">Rp {new Intl.NumberFormat('id-ID').format(roomDetails.base_price * 0.12)}</p>
+                <p className="leading-[1.375rem]">Rp {new Intl.NumberFormat('id-ID').format(roomDetails.base_price * 0.12 * guestList.rooms * calculateNights(dates.startDate, dates.endDate))}</p>
               </div>
               <div className="flex justify-between pt-5 text-sm font-medium text-black">
                   <span className="text-base font-semibold leading-[1.375rem]">Subtotal</span>
-                  <span className="text-base font-semibold leading-[1.375rem] text-gold-700">Rp {new Intl.NumberFormat('id-ID').format(roomDetails.base_price*1.12)}</span>
+                  <span className="text-base font-semibold leading-[1.375rem] text-gold-700">Rp {new Intl.NumberFormat('id-ID').format(roomDetails.base_price*1.12 * guestList.rooms * calculateNights(dates.startDate, dates.endDate))}</span>
               </div>
             </div>
           </div>

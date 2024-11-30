@@ -3,8 +3,9 @@
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Cookies from 'js-cookie';
+import axios from 'axios';
 
-const Dashboard = () => {
+const Reservation = () => {
   const [loading, setLoading] = useState(true);
   const [hotelData, setHotelData] = useState<any[]>([]); 
   const [iconUrl, setIconUrl] = useState<string>('');
@@ -12,7 +13,6 @@ const Dashboard = () => {
   const router = useRouter();
 
   useEffect(() => {
-    const token = Cookies.get('auth_token');
     const darkModeMediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
 
     const updateIcon = () => {
@@ -25,11 +25,7 @@ const Dashboard = () => {
         }
       };
 
-    if (!token) {
-      router.push('/login');  // Redirect to login if token is missing
-    } else {
-      fetchHotelData(token);
-    }
+    fetchHotelData();
 
     updateIcon();
 
@@ -40,22 +36,16 @@ const Dashboard = () => {
     };
   }, [router]);
 
-  const fetchHotelData = async (token: string) => {
+  const fetchHotelData = async () => {
     try {
-        const response = await fetch('http://127.0.0.1:8888/api/hotel', {
-        method: 'GET',  // GET request
-        headers: {
-            'Authorization': `Bearer ${token}`,  // Add the Bearer token to Authorization header
-            'Content-Type': 'application/json',  // Ensure the server expects JSON
-        },
-        });
+        const response = await axios.get('http://127.0.0.1:8888/api/hotel');
 
-        if (!response.ok) {
-        throw new Error('Failed to fetch hotel data');
+        if (!response.data) {
+            throw new Error('Failed to fetch hotel data');
         }
 
-        const data = await response.json();  // Parse the JSON response
-        setHotelData(data.data.Hotels);  // Store the data in state
+        const data = response.data;
+        setHotelData(data.data.Hotels);
         console.log(data.data.Hotels);
         setLoading(false);   // Set loading to false once data is fetched
     } catch (err) {
@@ -134,4 +124,4 @@ const Dashboard = () => {
   );
 };
 
-export default Dashboard;
+export default Reservation;

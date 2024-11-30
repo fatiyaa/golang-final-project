@@ -2,16 +2,30 @@
 
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
+import { Range } from 'react-date-range'; 
 import Cookies from 'js-cookie';
 import Link from 'next/link';
 
 import RoomSelector from '../components/RoomSelector';
 
-const Dashboard = () => {
+const Reservation = () => {
   const [loading, setLoading] = useState(true);
   const [roomData, setRoomData] = useState<any[]>([]);
   const [error, setError] = useState<string | null>(null);
   const router = useRouter();
+
+  const [guests, setGuests] = useState({
+    rooms: 0,
+    adults: 0,
+    children: 0,
+    infants: 0,
+  });
+
+  const [selectedDates, setSelectedDates] = useState<Range>({
+    startDate: new Date(),
+    endDate: new Date(),
+    key: 'selection',
+  });
 
   const fetchRoomData = async (token: string) => {
     try {
@@ -29,11 +43,11 @@ const Dashboard = () => {
 
       const data = await response.json();
       console.log(data);
-      setRoomData(data.data.Rooms);  // Update room data in the parent (Dashboard)
+      setRoomData(data.data.Rooms);  
     } catch (err) {
       console.error('Error fetching room data:', err);
     }
-  };
+  };  
 
 
   useEffect(() => {
@@ -54,23 +68,28 @@ const Dashboard = () => {
     return <div>Loading...</div>;
   }
 
-  const handleLogout = () => {
-    // Menghapus token dari cookies
-    Cookies.remove('auth_token');
-    
-    // Redirect ke halaman login setelah logout
-    router.push('/login');
-  };
-
   return (
     <section className="bg-gray-50 dark:bg-gray-900 w-full">
-      <RoomSelector  rooms={[]} setRooms={setRoomData} />
+      <RoomSelector
+        rooms={roomData}
+        setRooms={setRoomData}
+        guests={guests}
+        setGuests={setGuests}
+        selectedDates={selectedDates}
+        setSelectedDates={setSelectedDates}
+      />
       {/* Full Width container for room */}
         <div className="flex flex-col items-center px-6 py-8 mx-auto w-full gap-4">
       {roomData.map((room: any) => (
         <Link
-          key={room.id}  // Use room.id as key if available
-          href={`/dashboard/${room.id}`}  // Dynamic route to room details page (adjust the URL as per your route structure)
+          key={room.id}
+          href={{
+            pathname: `/reservation/${room.id}`,
+            query: {
+              guests: JSON.stringify(guests), // Convert objects to string
+              selectedDates: JSON.stringify(selectedDates),
+            },
+          }}
           passHref
           className='flex flex-col items-center mx-auto w-full'
         >
@@ -122,4 +141,4 @@ const Dashboard = () => {
   );
 };
 
-export default Dashboard;
+export default Reservation;
