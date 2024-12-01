@@ -91,6 +91,5 @@ func (j *jwtService) GetRoleByToken(token string) (string, error) {
 
 	claims := t_Token.Claims.(jwt.MapClaims)
 	role := fmt.Sprintf("%v", claims["role"])
-	fmt.Println(role)
 	return role, nil
 }

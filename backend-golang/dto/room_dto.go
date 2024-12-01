@@ -1,17 +1,22 @@
 package dto
 
-import "github.com/fatiyaa/golang-final-project/entity"
+import (
+	"mime/multipart"
+
+	"github.com/fatiyaa/golang-final-project/entity"
+)
 
 type (
 	RoomCreateRequest struct {
-		Name        string `json:"name" binding:"required"`
-		HotelID     int64  `json:"hotel_id" binding:"required"`
-		ImageUrl    string `json:"image_url"`
-		Type        string `json:"type" binding:"required"`
-		BasePrice   int64  `json:"base_price" binding:"required"`
-		Quantity    int64  `json:"quantity" binding:"required"`
-		IsAvailable bool   `json:"is_available" binding:"required"`
-		Description string `json:"description" binding:"required"`
+		Name        string               `json:"name" binding:"required" form:"name"`
+		HotelID     int64                `json:"hotel_id" binding:"required" form:"hotel_id"`
+		ImageUrl    string               `json:"image_url" form:"image_url"` // URL gambar bisa dikirim sebagai form field
+		Image       *multipart.FileHeader `json:"image" form:"image"`         // Untuk menangani file gambar yang diupload
+		Type        string               `json:"type" binding:"required" form:"type"`
+		BasePrice   int64                `json:"base_price" binding:"required" form:"base_price"`
+		Quantity    int64                `json:"quantity" binding:"required" form:"quantity"`
+		IsAvailable bool                 `json:"is_available" binding:"required" form:"is_available"`
+		Description string               `json:"description" form:"description"`
 	}
 
 	RoomUpdateRequest struct {

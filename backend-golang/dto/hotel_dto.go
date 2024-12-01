@@ -1,16 +1,31 @@
 package dto
 
-import "github.com/fatiyaa/golang-final-project/entity"
+import (
+	"mime/multipart"
+
+	"github.com/fatiyaa/golang-final-project/entity"
+)
 
 type HotelCreateRequest struct {
-	Name        string  `json:"name" binding:"required"`
-	ImageUrl    string  `json:"image_url"`
-	City        string  `json:"city" binding:"required"`
-	Address     string  `json:"address" binding:"required"`
-	PhoneNumber string  `json:"phone_number" binding:"required"`
-	Email       string  `json:"email" binding:"required"`
-	Rating      float64 `json:"rating" binding:"required"`
-	Description string  `json:"description" binding:"required"`
+	Name        string                `json:"name" form:"name" binding:"required"`
+	Image       *multipart.FileHeader `json:"image" form:"image" `
+	City        string                `json:"city" form:"city" binding:"required"`
+	Address     string                `json:"address" form:"address" binding:"required"`
+	PhoneNumber string                `json:"phone_number" form:"phone_number" binding:"required"`
+	Email       string                `json:"email" form:"email" binding:"required"`
+	Rating      float64               `json:"rating" form:"rating" binding:"required"`
+	Description string                `json:"description" form:"description" `
+}
+
+type HotelCreateResponse struct {
+	Name        string  `json:"name" `
+	ImageUrl    string  `json:"image"`
+	City        string  `json:"city" `
+	Address     string  `json:"address" `
+	PhoneNumber string  `json:"phone_number" `
+	Email       string  `json:"email" `
+	Rating      float64 `json:"rating" `
+	Description string  `json:"description" `
 }
 
 type HotelUpdateRequest struct {

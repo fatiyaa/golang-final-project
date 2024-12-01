@@ -2,10 +2,13 @@ package service
 
 import (
 	"context"
+	"fmt"
 
 	"github.com/fatiyaa/golang-final-project/dto"
 	"github.com/fatiyaa/golang-final-project/entity"
 	"github.com/fatiyaa/golang-final-project/repository"
+	"github.com/fatiyaa/golang-final-project/utils"
+	"github.com/google/uuid"
 )
 
 type (
@@ -31,10 +34,23 @@ func NewRoomService(roomRepo repository.RoomRepository) RoomService {
 }
 
 func (s *roomService) RegisterRoom(ctx context.Context, req dto.RoomCreateRequest) (dto.RoomCreateRequest, error) {
+
+	var filename string
+
+	if req.Image != nil {
+		imageId := uuid.New()
+		ext := utils.GetExtensions(req.Image.Filename)
+
+		filename = fmt.Sprintf("room/%s.%s", imageId, ext)
+		if err := utils.UploadFile(req.Image, filename); err != nil {
+			return dto.RoomCreateRequest{}, err
+		}
+	}
+
 	room := entity.Room{
 		Name:        req.Name,
 		HotelID:     req.HotelID,
-		ImageUrl:    req.ImageUrl,
+		ImageUrl:    filename,
 		Type:        req.Type,
 		BasePrice:   req.BasePrice,
 		Quantity:    req.Quantity,

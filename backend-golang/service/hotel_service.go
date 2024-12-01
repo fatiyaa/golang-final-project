@@ -2,14 +2,18 @@ package service
 
 import (
 	"context"
+	"fmt"
+
 	"github.com/fatiyaa/golang-final-project/dto"
 	"github.com/fatiyaa/golang-final-project/entity"
 	"github.com/fatiyaa/golang-final-project/repository"
+	"github.com/fatiyaa/golang-final-project/utils"
+	"github.com/google/uuid"
 )
 
 type (
 	HotelService interface {
-		RegisterHotel(ctx context.Context, req dto.HotelCreateRequest) (dto.HotelCreateRequest, error)
+		RegisterHotel(ctx context.Context, req dto.HotelCreateRequest) (dto.HotelCreateResponse, error)
 		UpdateHotel(ctx context.Context, req dto.HotelUpdateRequest, hotrlId string) (dto.HotelUpdateRequest, error)
 		GetAllHotel(ctx context.Context, req dto.PaginationRequest) (dto.GetHotelRepositoryResponse, error)
 		GetHotelById(ctx context.Context, hotelId string) (dto.HotelResponse, error)
@@ -29,10 +33,22 @@ func NewHotelService(hotelRepo repository.HotelRepository) HotelService {
 	}
 }
 
-func (s *hotelService) RegisterHotel(ctx context.Context, req dto.HotelCreateRequest) (dto.HotelCreateRequest, error) {
+func (s *hotelService) RegisterHotel(ctx context.Context, req dto.HotelCreateRequest) (dto.HotelCreateResponse, error) {
+	var filename string
+
+	if req.Image != nil {
+		imageId := uuid.New()
+		ext := utils.GetExtensions(req.Image.Filename)
+
+		filename = fmt.Sprintf("hotel/%s.%s", imageId, ext)
+		if err := utils.UploadFile(req.Image, filename); err != nil {
+			return dto.HotelCreateResponse{}, err
+		}
+	}
+
 	hotel := entity.Hotel{
 		Name:        req.Name,
-		ImageUrl:    req.ImageUrl,
+		ImageUrl:    filename,
 		City:        req.City,
 		Address:     req.Address,
 		PhoneNumber: req.PhoneNumber,
@@ -43,10 +59,10 @@ func (s *hotelService) RegisterHotel(ctx context.Context, req dto.HotelCreateReq
 
 	createdhotel, err := s.hotelRepo.RegisterHotel(ctx, nil, hotel)
 	if err != nil {
-		return dto.HotelCreateRequest{}, err
+		return dto.HotelCreateResponse{}, err
 	}
 
-	response := dto.HotelCreateRequest{
+	response := dto.HotelCreateResponse{
 		Name:        createdhotel.Name,
 		ImageUrl:    createdhotel.ImageUrl,
 		City:        createdhotel.City,
