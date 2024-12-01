@@ -281,15 +281,35 @@ func (s *userService) GetUserByEmail(ctx context.Context, email string) (dto.Use
 }
 
 func (s *userService) Update(ctx context.Context, req dto.UserUpdateRequest, userId string) (dto.UserUpdateResponse, error) {
+
 	user, err := s.userRepo.GetUserById(ctx, nil, userId)
 	if err != nil {
 		return dto.UserUpdateResponse{}, dto.ErrUserNotFound
+	}
+
+	var filename string
+	if req.Image != nil {
+		imageId := uuid.New()
+		ext := utils.GetExtensions(req.Image.Filename)
+
+		filename = fmt.Sprintf("profile/%s.%s", imageId, ext)
+		if err := utils.UploadFile(req.Image, filename); err != nil {
+			return dto.UserUpdateResponse{}, err
+		}
+		if user.ImageUrl != "" {
+			if err := utils.DeleteFile(user.ImageUrl); err != nil {
+				return dto.UserUpdateResponse{}, err
+			}
+		}
+	} else {
+		filename = user.ImageUrl
 	}
 
 	data := entity.User{
 		ID:         user.ID,
 		Name:       req.Name,
 		TelpNumber: req.TelpNumber,
+		ImageUrl:   filename,
 		Role:       user.Role,
 		Email:      req.Email,
 	}
@@ -303,6 +323,7 @@ func (s *userService) Update(ctx context.Context, req dto.UserUpdateRequest, use
 		ID:         strconv.FormatInt(userUpdate.ID, 10),
 		Name:       userUpdate.Name,
 		TelpNumber: userUpdate.TelpNumber,
+		ImageUrl:   userUpdate.ImageUrl,
 		Role:       userUpdate.Role,
 		Email:      userUpdate.Email,
 		IsVerified: user.IsVerified,

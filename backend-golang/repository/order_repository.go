@@ -67,7 +67,7 @@ func (r *orderRepository) GetAllOrder(ctx context.Context, tx *gorm.DB, req dto.
 		return dto.GetOrderRepositoryResponse{}, err
 	}
 
-	if err := tx.WithContext(ctx).Preload("User").Preload("Room").Preload("Room.Hotel").Offset(offset).Limit(req.PerPage).Find(&orders).Error; err != nil {
+	if err := tx.WithContext(ctx).Preload("User").Preload("Room").Preload("Room.Hotel").Offset(offset).Limit(req.PerPage).Order("updated_at DESC").Find(&orders).Error; err != nil {
 		return dto.GetOrderRepositoryResponse{}, err
 	}
 

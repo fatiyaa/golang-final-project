@@ -78,10 +78,35 @@ func (s *roomService) RegisterRoom(ctx context.Context, req dto.RoomCreateReques
 }
 
 func (s *roomService) UpdateRoom(ctx context.Context, req dto.RoomUpdateRequest, roomId string) (dto.RoomUpdateRequest, error) {
+	roomData, err := s.roomRepo.GetRoomById(ctx, nil, roomId)
+	if err != nil {
+		return dto.RoomUpdateRequest{}, err
+	}
+
+	var filename string
+
+	if req.Image != nil {
+		imageId := uuid.New()
+		ext := utils.GetExtensions(req.Image.Filename)
+
+		filename = fmt.Sprintf("room/%s.%s", imageId, ext)
+		if err := utils.UploadFile(req.Image, filename); err != nil {
+			return dto.RoomUpdateRequest{}, err
+		}
+		if roomData.ImageUrl != "" {
+			if err := utils.DeleteFile(roomData.ImageUrl); err != nil {
+				return dto.RoomUpdateRequest{}, err
+			}
+		}
+	} else {
+		filename = roomData.ImageUrl
+	}
+
+
 	room := entity.Room{
 		Name:        req.Name,
 		HotelID:     req.HotelID,
-		ImageUrl:    req.ImageUrl,
+		ImageUrl:    filename,
 		Type:        req.Type,
 		BasePrice:   req.BasePrice,
 		Quantity:    req.Quantity,

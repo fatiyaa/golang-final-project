@@ -77,9 +77,34 @@ func (s *hotelService) RegisterHotel(ctx context.Context, req dto.HotelCreateReq
 }
 
 func (s *hotelService) UpdateHotel(ctx context.Context, req dto.HotelUpdateRequest, hotelId string) (dto.HotelUpdateRequest, error) {
+	
+	hotelData, err := s.hotelRepo.GetHotelById(ctx, nil, hotelId)
+	if err != nil {
+		return dto.HotelUpdateRequest{}, err
+	}
+
+	var filename string
+
+	if req.Image != nil {
+		imageId := uuid.New()
+		ext := utils.GetExtensions(req.Image.Filename)
+
+		filename = fmt.Sprintf("hotel/%s.%s", imageId, ext)
+		if err := utils.UploadFile(req.Image, filename); err != nil {
+			return dto.HotelUpdateRequest{}, err
+		}
+		if hotelData.ImageUrl != "" {
+			if err := utils.DeleteFile(hotelData.ImageUrl); err != nil {
+				return dto.HotelUpdateRequest{}, err
+			}
+		}
+	} else {
+		filename = hotelData.ImageUrl
+	}
+
 	hotel := entity.Hotel{
 		Name:        req.Name,
-		ImageUrl:    req.ImageUrl,
+		ImageUrl:    filename,
 		City:        req.City,
 		Address:     req.Address,
 		PhoneNumber: req.PhoneNumber,
