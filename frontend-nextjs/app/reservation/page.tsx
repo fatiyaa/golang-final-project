@@ -13,10 +13,11 @@ const Reservation = () => {
   const [roomData, setRoomData] = useState<any[]>([]);
   const [error, setError] = useState<string | null>(null);
   const router = useRouter();
+  const isLinkDisabled = false;
 
   const [guests, setGuests] = useState({
-    rooms: 0,
-    adults: 0,
+    rooms: 1,
+    adults: 1,
     children: 0,
     infants: 0,
   });
@@ -91,7 +92,7 @@ const Reservation = () => {
             },
           }}
           passHref
-          className='flex flex-col items-center mx-auto w-full'
+          className={`flex flex-col items-center mx-auto w-full ${isLinkDisabled ? 'cursor-not-allowed opacity-50' : 'cursor-pointer'}`}
         >
           <div className="relative w-full sm:w-full md:w-4/5 lg:w-3/4 xl:w-2/3 bg-white rounded-lg shadow dark:bg-gray-800 dark:border-gray-700 flex items-center cursor-pointer hover:shadow-lg transition-shadow duration-300">
             {/* Image with rounded left corners */}
@@ -105,9 +106,9 @@ const Reservation = () => {
             <div className='justify-between gap-7 rounded-b-lg flex h-[230px] w-[calc(100%-327px)] flex-row items-center rounded-bl-none rounded-br-lg rounded-tl-none rounded-tr-lg border border-gray-100 dark:bg-gray-800 dark:border-gray-700 p-6'>
               {/* Room Details */}
               <div className="ml-4 flex-1 pb-6">
-                <h3 className="pb-2 font-semibold text-4xl text-gray-900 dark:text-white">{room.name}</h3>
-                <div>
-                  <span>{room.hotel.name} • {room.type}</span>
+                <h3 className="pb-1 font-semibold text-4xl text-gray-900 dark:text-white">{room.name}</h3>
+                <div className='mb-5'>
+                  <span className="text-sm text-gray-500 dark:text-gray-200">{room.hotel_name} • {room.type}</span>
                 </div>
                 <p className="text-sm text-gray-500 dark:text-gray-200">{room.description}</p>
                 <p className="text-sm text-gray-500 dark:text-gray-200">King/Twin</p>
@@ -123,7 +124,7 @@ const Reservation = () => {
                   <span>/</span>
                   <span>Night</span>
                 </p>
-                <div className='flex flex-col text-xs leading-5 md:text-sm dark:text-gray-00'>
+                <div className='flex flex-col text-xs leading-5 md:text-sm dark:text-gray-400'>
                   <p className='flex items-center gap-1'>
                     <span>Rp {new Intl.NumberFormat('id-ID').format(room.base_price * 3)}</span>
                     <span>/</span>

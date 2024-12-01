@@ -240,7 +240,7 @@ const RoomDetails = () => {
             <p className="text-left text-sm font-semibold uppercase leading-6 tracking-[0.044rem] text-gray-800/50">Stay Information</p>
             <p className="border-b border-b-gray-100 py-4 text-left text-sm font-medium leading-5">{formatDate(dates.startDate)} - {formatDate(dates.endDate)} , {calculateNights(dates.startDate, dates.endDate)} Night</p>
             <p className="border-b border-b-gray-100 py-4 text-left text-sm font-medium leading-5">{guestList.rooms} Room · {guestList.adults} Adult</p>
-            <div className="border-b border-b-gray-100 py-5">
+            <div className="border-b bor der-b-gray-100 py-5">
               <div className="flex items-start gap-2">
               <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 -960 960 960" className="h-5 w-5 shrink-0 fill-current text-red-500">
               <path d="m330-288 150-150 150 150 42-42-150-150 150-150-42-42-150 150-150-150-42 42 150 150-150 150zM480-80q-82 0-155-31.5t-127.5-86-86-127.5T80-480q0-83 31.5-156t86-127T325-848.5 480-880q83 0 156 31.5T763-763t85.5 127T880-480q0 82-31.5 155T763-197.5t-127 86T480-80m0-60q142 0 241-99.5T820-480q0-142-99-241t-241-99q-141 0-240.5 99T140-480q0 141 99.5 240.5T480-140m0-340"></path>

@@ -31,9 +31,16 @@ export default function RoomSelector({
   setSelectedDates,
 }: RoomData) {
 
+  const formatDate = (date: Date) => {
+    const year = date.getFullYear();
+    const month = (date.getMonth() + 1).toString().padStart(2, '0'); // Adding 1 as getMonth() is zero-indexed
+    const day = date.getDate().toString().padStart(2, '0');
+    return `${year}-${month}-${day}`;
+  };
+
   const fetchRoomData = async (token: string) => {
     try {
-      const response = await fetch('http://127.0.0.1:8888/api/room', {
+      const response = await fetch(`http://127.0.0.1:8888/api/order/available/${formatDate(new Date(selectedDates.startDate))}`, {
         method: 'GET',
         headers: {
           'Authorization': `Bearer ${token}`,
@@ -47,6 +54,7 @@ export default function RoomSelector({
 
       const data = await response.json();
       setRooms(data.data.Rooms); 
+      console.log(data.data.Rooms);
     } catch (err) {
       console.error('Error fetching room data:', err);
     }

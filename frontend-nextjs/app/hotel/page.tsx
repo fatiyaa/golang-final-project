@@ -70,10 +70,9 @@ const Reservation = () => {
   return (
     <div>
       {/* Render the fetched hotel data if available */}
-      <h2 className="text-2xl font-bold">Our Hotel</h2>
       {hotelData && hotelData.length > 0 ? (
-        <div className='bg-gray-50 dark:bg-black w-full'>
-            <div className='flex flex-col text-gray-900 dark:text-gray-200'>
+        <div className='bg-black w-full'>
+            <div className='flex flex-col text-gray-200'>
                 {hotelData.map((hotel: any, index: number) => (
                     <div className={`flex flex-row gap-3 ${index % 2 === 0 ? 'flex-row' : 'flex-row-reverse'}`}>
                         <img
