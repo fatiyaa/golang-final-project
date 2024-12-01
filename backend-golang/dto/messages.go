@@ -17,6 +17,9 @@ const (
 	MESSAGE_SUCCESS_DELETE_HOTEL = "Hotel successfully deleted"
 	MESSAGE_FAILED_DELETE_HOTEL  = "Failed to delete hotel"
 
+	MESSAGE_SUCCESS_GET_CITY_LIST = "Successfully get city list"
+	MESSAGE_FAILED_GET_CITY_LIST  = "Failed to get city list"
+
 	// Room
 	MESSAGE_SUCCESS_CREATE_ROOM = "Room successfully created"
 	MESSAGE_FAILED_CREATE_ROOM = "Failed to create room"

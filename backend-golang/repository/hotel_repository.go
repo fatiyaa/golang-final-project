@@ -16,7 +16,8 @@ type (
 		GetAllHotel(ctx context.Context, tx *gorm.DB, req dto.PaginationRequest) (dto.GetHotelRepositoryResponse, error)
 		GetHotelById(ctx context.Context, tx *gorm.DB, hotelId string) (entity.Hotel, error)
 		DeleteHotel(ctx context.Context, tx *gorm.DB, hotelId string) error
-		// SearchByCity(ctx context.Context, tx *gorm.DB, req dto.PaginationRequest, city string) (dto.GetHotelRepositoryResponse, error)
+		CityList(ctx context.Context, tx *gorm.DB) ([]string, error)
+		GetHotelByCity(ctx context.Context, tx *gorm.DB, req dto.PaginationRequest, city string) (dto.GetHotelRepositoryResponse, error)
 	}
 
 	hotelRepository struct {
@@ -121,29 +122,56 @@ func (r *hotelRepository) DeleteHotel(ctx context.Context, tx *gorm.DB, hotelId 
 	return nil
 }
 
-// func (r *hotelRepository) SearchByCity(ctx context.Context, tx *gorm.DB, req dto.PaginationRequest, city string) (dto.GetHotelRepositoryResponse, error) {
-// 	if tx == nil {
-// 		tx = r.db
-// 	}
+func (r *hotelRepository) CityList(ctx context.Context, tx *gorm.DB) ([]string, error) {
+	if tx == nil {
+		tx = r.db
+	}
 
-// 	var hotels []entity.Hotel
-// 	var err error
-// 	var count int64
+	var cities []string
 
-// 	if err = tx.WithContext(ctx).Model(&entity.Hotel{}).Where("city ILIKE ?", city).Count(&count).Error; err != nil {
-// 		return dto.GetHotelRepositoryResponse{}, err
-// 	}
+	if err := tx.WithContext(ctx).Model(&entity.Hotel{}).Select("city").Group("city").Find(&cities).Error; err != nil {
+		return nil, err
+	}
 
-// 	if err = tx.WithContext(ctx).Model(&entity.Hotel{}).Where("city ILIKE ?", city).Find(&hotels).Error;err != nil {
-// 		return dto.GetHotelRepositoryResponse{}, err
-// 	}
+	return cities, nil
+}
 
-// 	return dto.GetHotelRepositoryResponse{
-// 		Hotels: hotels,
-// 		PaginationResponse: dto.PaginationResponse{
-// 			Page:    req.Page,
-// 			PerPage: req.PerPage,
-// 			Count:   count,
-// 		},
-// 	}, nil
-// }
+func (r *hotelRepository) GetHotelByCity(ctx context.Context, tx *gorm.DB, req dto.PaginationRequest, city string) (dto.GetHotelRepositoryResponse, error) {
+	if tx == nil {
+		tx = r.db
+	}
+
+	var hotels []entity.Hotel
+	var count int64
+	var err error
+
+	if req.PerPage == 0 {
+		req.PerPage = 10
+	}
+
+	if req.Page == 0 {
+		req.Page = 1
+	}
+
+	offset := (req.Page - 1) * req.PerPage
+
+	if err = tx.WithContext(ctx).Model(&entity.Hotel{}).Where("city = ?", city).Count(&count).Error; err != nil {
+		return dto.GetHotelRepositoryResponse{}, err
+	}
+
+	if err = tx.WithContext(ctx).Model(&entity.Hotel{}).Where("city = ?", city).Limit(req.PerPage).Offset(offset).Find(&hotels).Error; err != nil {
+		return dto.GetHotelRepositoryResponse{}, err
+	}
+
+	totalPage := int64(math.Ceil(float64(count) / float64(req.PerPage)))
+
+	return dto.GetHotelRepositoryResponse{
+		Hotels: hotels,
+		PaginationResponse: dto.PaginationResponse{
+			Page:    req.Page,
+			PerPage: req.PerPage,
+			MaxPage: totalPage,
+			Count:   count,
+		},
+	}, nil
+}

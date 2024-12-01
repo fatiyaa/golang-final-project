@@ -16,6 +16,7 @@ type (
 		CreateOrder(ctx context.Context, tx *gorm.DB, order entity.Order) (entity.Order, error)
 		UpdateOrderStatus(ctx context.Context, tx *gorm.DB, status string, orderId string) (string, error)
 		GetAllOrder(ctx context.Context, tx *gorm.DB, req dto.PaginationRequest) (dto.GetOrderRepositoryResponse, error)
+		GetOrderByUserId(ctx context.Context, tx *gorm.DB, req dto.PaginationRequest, userId string) (dto.GetOrderRepositoryResponse, error)
 		GetOrderById(ctx context.Context, tx *gorm.DB, orderId string) (entity.Order, error)
 		GetAvailRoomByDate(ctx context.Context, tx *gorm.DB, req dto.PaginationRequest, date string) (dto.GetRoomRepositoryResponse, error)
 		DeleteOrder(ctx context.Context, tx *gorm.DB, orderId string) error
@@ -82,6 +83,47 @@ func (r *orderRepository) GetAllOrder(ctx context.Context, tx *gorm.DB, req dto.
 		},
 	}, nil
 }
+
+func (r *orderRepository) GetOrderByUserId(ctx context.Context, tx *gorm.DB, req dto.PaginationRequest, userId string) (dto.GetOrderRepositoryResponse, error) {
+	if tx == nil {
+		tx = r.db
+	}
+
+	var orders []entity.Order
+	var count int64
+
+	if req.PerPage == 0 {
+		req.PerPage = 10
+	}
+
+	if req.Page == 0 {
+		req.Page = 1
+	}
+
+	offset := (req.Page - 1) * req.PerPage
+
+	if err := tx.WithContext(ctx).Model(&entity.Order{}).Where("user_id = ?", userId).Count(&count).Error; err != nil {
+		return dto.GetOrderRepositoryResponse{}, err
+	}
+
+	if err := tx.WithContext(ctx).Preload("User").Preload("Room").Preload("Room.Hotel").Where("user_id = ?", userId).Offset(offset).Limit(req.PerPage).Find(&orders).Error; err != nil {
+		return dto.GetOrderRepositoryResponse{}, err
+	}
+
+	totalPage := int64(math.Ceil(float64(count) / float64(req.PerPage)))
+	
+
+	return dto.GetOrderRepositoryResponse{
+		Orders: orders,
+		PaginationResponse: dto.PaginationResponse{
+			Page: req.Page,
+			PerPage: req.PerPage,
+			MaxPage: totalPage,
+			Count: count,
+		},
+	}, nil
+}
+
 
 func (r *orderRepository) GetOrderById(ctx context.Context, tx *gorm.DB, orderId string) (entity.Order, error) {
 	if tx == nil {

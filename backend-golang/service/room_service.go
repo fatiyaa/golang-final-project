@@ -13,7 +13,8 @@ type (
 		RegisterRoom(ctx context.Context, req dto.RoomCreateRequest) (dto.RoomCreateRequest, error)
 		UpdateRoom(ctx context.Context, req dto.RoomUpdateRequest, roomId string) (dto.RoomUpdateRequest, error)
 		UpdateStatusRoom(ctx context.Context, roomId string) error
-		GetAllRoom(ctx context.Context, req dto.PaginationRequest) (dto.GetRoomRepositoryResponse, error)
+		GetAllRoom(ctx context.Context, req dto.PaginationRequest) (dto.GetRoomList, error)
+		GetRoomByHotel(ctx context.Context, req dto.PaginationRequest, hotelId string) (dto.GetRoomList, error)
 		GetRoomById(ctx context.Context, roomId string) (dto.RoomResponse, error)
 		DeleteRoom(ctx context.Context, roomId string) error
 	}
@@ -91,13 +92,74 @@ func (s *roomService) UpdateRoom(ctx context.Context, req dto.RoomUpdateRequest,
 	return response, nil
 }
 
-func (s *roomService) GetAllRoom(ctx context.Context, req dto.PaginationRequest) (dto.GetRoomRepositoryResponse, error) {
+func (s *roomService) GetAllRoom(ctx context.Context, req dto.PaginationRequest) (dto.GetRoomList, error) {
 	rooms, err := s.roomRepo.GetAllRoom(ctx, nil, req)
 	if err != nil {
-		return dto.GetRoomRepositoryResponse{}, err
+		return dto.GetRoomList{}, err
 	}
 
-	return rooms, nil
+	var listRooms []dto.RoomResponse
+	for _, room := range rooms.Rooms {
+		listRooms = append(listRooms, dto.RoomResponse{
+			ID:          room.ID,
+			Name:        room.Name,
+			HotelID:     room.HotelID,
+			HotelName:   room.Hotel.Name,
+			ImageUrl:    room.ImageUrl,
+			Type:        room.Type,
+			BasePrice:   room.BasePrice,
+			Quantity:    room.Quantity,
+			IsAvailable: room.IsAvailable,
+			Description: room.Description,
+		})
+	}
+
+	response := dto.GetRoomList{
+		Rooms: listRooms,
+		PaginationResponse: dto.PaginationResponse{
+			Page:    rooms.Page,
+			PerPage: rooms.PerPage,
+			Count:   rooms.Count,
+			MaxPage: rooms.MaxPage,
+		},
+	}
+
+	return response, nil
+}
+
+func (s *roomService) GetRoomByHotel(ctx context.Context, req dto.PaginationRequest, hotelId string) (dto.GetRoomList, error) {
+	rooms, err := s.roomRepo.GetRoomByHotel(ctx, nil, req, hotelId)
+	if err != nil {
+		return dto.GetRoomList{}, err
+	}
+
+	var listRooms []dto.RoomResponse
+	for _, room := range rooms.Rooms {
+		listRooms = append(listRooms, dto.RoomResponse{
+			ID:          room.ID,
+			Name:        room.Name,
+			HotelID:     room.HotelID,
+			HotelName:   room.Hotel.Name,
+			ImageUrl:    room.ImageUrl,
+			Type:        room.Type,
+			BasePrice:   room.BasePrice,
+			Quantity:    room.Quantity,
+			IsAvailable: room.IsAvailable,
+			Description: room.Description,
+		})
+	}
+
+	response := dto.GetRoomList{
+		Rooms: listRooms,
+		PaginationResponse: dto.PaginationResponse{
+			Page:    rooms.Page,
+			PerPage: rooms.PerPage,
+			Count:   rooms.Count,
+			MaxPage: rooms.MaxPage,
+		},
+	}
+
+	return response, nil
 }
 
 func (s *roomService) UpdateStatusRoom(ctx context.Context, roomId string) error {

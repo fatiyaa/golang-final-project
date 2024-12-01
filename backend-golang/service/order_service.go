@@ -16,6 +16,7 @@ type (
 		CreateOrder(ctx context.Context, req dto.OrderCreateRequest, userId string) (dto.OrderCreateRequest, error)
 		UpdateOrderStatus(ctx context.Context, orderId string, status string) (string, error)
 		GetAllOrder(ctx context.Context, req dto.PaginationRequest) (dto.GetOrderResponse, error)
+		GetOrderByUserId(ctx context.Context, req dto.PaginationRequest, userId string) (dto.GetOrderResponse, error)
 		GetOrderById(ctx context.Context, orderId string) (dto.OrderResponse, error)
 		GetAvailRoomByDate(ctx context.Context, req dto.PaginationRequest, date string) (dto.GetRoomList, error)
 		DeleteOrder(ctx context.Context, orderId string) error
@@ -125,6 +126,66 @@ func (s *orderService) GetAllOrder(ctx context.Context, req dto.PaginationReques
 	}, nil
 
 }
+
+func (s *orderService) GetOrderByUserId(ctx context.Context, req dto.PaginationRequest, userId string) (dto.GetOrderResponse, error) {
+	orders, err := s.orderRepo.GetOrderByUserId(ctx, nil, req, userId)
+	if err != nil {
+		return dto.GetOrderResponse{}, err
+	}
+
+	var listOrders []dto.OrderResponse
+	for _, order := range orders.Orders {
+		startDate, err := time.Parse("2006-01-02", order.DateStart)
+		if err != nil {
+			return dto.GetOrderResponse{}, err
+		}
+		endDate, err := time.Parse("2006-01-02", order.DateEnd)
+		if err != nil {
+			return dto.GetOrderResponse{}, err
+		}
+		price := order.Room.BasePrice * ((int64(endDate.Sub(startDate).Hours()) / 24) + 1)
+
+		var roomName string
+		if order.Room.Name == "" {
+			roomName = "Room deleted"
+		} else {
+			roomName = order.Room.Name
+		}
+
+		var hotelName string
+		if order.Room.Hotel.Name == "" {
+			hotelName = "Room or Hotel deleted"
+		} else {
+			hotelName = order.Room.Hotel.Name
+		}
+
+		listOrders = append(listOrders, dto.OrderResponse{
+			ID:        order.ID,
+			UserID:    order.UserID,
+			Username:  order.User.Name,
+			RoomID:    order.RoomID,
+			RoomName:  roomName,
+			HotelID:   order.Room.HotelID,
+			HotelName: hotelName,
+			Status:    order.Status,
+			DateStart: order.DateStart,
+			DateEnd:   order.DateEnd,
+			Note:      order.Note,
+			Price:     price,
+		})
+	}
+
+	return dto.GetOrderResponse{
+		Orders: listOrders,
+		PaginationResponse: dto.PaginationResponse{
+			Page:    orders.Page,
+			PerPage: orders.PerPage,
+			Count:   orders.Count,
+			MaxPage: orders.MaxPage,
+		},
+	}, nil
+}
+
 
 func (s *orderService) GetOrderById(ctx context.Context, orderId string) (dto.OrderResponse, error) {
 	order, err := s.orderRepo.GetOrderById(ctx, nil, orderId)

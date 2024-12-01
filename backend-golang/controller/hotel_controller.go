@@ -16,6 +16,8 @@ type (
 		GetAllHotel(ctx *gin.Context)
 		GetHotelById(ctx *gin.Context)
 		Delete(ctx *gin.Context)
+		CityList(ctx *gin.Context)
+		GetHotelByCity(ctx *gin.Context)
 	}
 
 	hotelController struct {
@@ -118,5 +120,36 @@ func (c *hotelController) Delete(ctx *gin.Context) {
 	}
 
 	res := utils.BuildResponseSuccess(dto.MESSAGE_SUCCESS_DELETE_HOTEL, nil)
+	ctx.JSON(http.StatusOK, res)
+}
+
+func (c *hotelController) CityList(ctx *gin.Context) {
+	result, err := c.hotelService.CityList(ctx.Request.Context())
+	if err != nil {
+		res := utils.BuildResponseFailed(dto.MESSAGE_FAILED_GET_CITY_LIST, err.Error(), nil)
+		ctx.JSON(http.StatusBadRequest, res)
+		return
+	}
+
+	res := utils.BuildResponseSuccess(dto.MESSAGE_SUCCESS_GET_CITY_LIST, result)
+	ctx.JSON(http.StatusOK, res)
+}
+
+func (c *hotelController) GetHotelByCity(ctx *gin.Context) {
+	var req dto.PaginationRequest
+	if err := ctx.ShouldBind(&req); err != nil {
+		res := utils.BuildResponseFailed(dto.MESSAGE_FAILED_GET_DATA_FROM_BODY, err.Error(), nil)
+		ctx.AbortWithStatusJSON(http.StatusBadRequest, res)
+		return
+	}
+	city := ctx.Query("city")
+	result, err := c.hotelService.GetHotelByCity(ctx.Request.Context(), req, city)
+	if err != nil {
+		res := utils.BuildResponseFailed(dto.MESSAGE_FAILED_GET_HOTEL, err.Error(), nil)
+		ctx.JSON(http.StatusBadRequest, res)
+		return
+	}
+
+	res := utils.BuildResponseSuccess(dto.MESSAGE_SUCCESS_GET_HOTEL, result)
 	ctx.JSON(http.StatusOK, res)
 }

@@ -14,6 +14,7 @@ type (
 		CreateRoom(ctx *gin.Context)
 		UpdateRoom(ctx *gin.Context)
 		GetAllRoom(ctx *gin.Context)
+		GetRoomByHotel(ctx *gin.Context)
 		GetRoomById(ctx *gin.Context)
 		DeleteRoom(ctx *gin.Context)
 	}
@@ -85,6 +86,25 @@ func (c *roomController) GetAllRoom(ctx *gin.Context) {
 
 	resp := utils.BuildResponseSuccess(dto.MESSAGE_SUCCESS_GET_LIST_ROOM, result)
 	ctx.JSON(http.StatusOK, resp)
+}
+
+func (c *roomController) GetRoomByHotel(ctx *gin.Context) {
+	var req dto.PaginationRequest
+	if err := ctx.ShouldBind(&req); err != nil {
+		res := utils.BuildResponseFailed(dto.MESSAGE_FAILED_GET_DATA_FROM_BODY, err.Error(), nil)
+		ctx.AbortWithStatusJSON(http.StatusBadRequest, res)
+		return
+	}
+	hotelId := ctx.Param("hotel_id")
+	result, err := c.roomService.GetRoomByHotel(ctx.Request.Context(), req, hotelId)
+	if err != nil {
+		res := utils.BuildResponseFailed(dto.MESSAGE_FAILED_GET_ROOM, err.Error(), nil)
+		ctx.JSON(http.StatusBadRequest, res)
+		return
+	}
+
+	res := utils.BuildResponseSuccess(dto.MESSAGE_SUCCESS_GET_ROOM, result)
+	ctx.JSON(http.StatusOK, res)
 }
 
 func (c *roomController) GetRoomById(ctx *gin.Context) {

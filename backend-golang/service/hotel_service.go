@@ -14,6 +14,8 @@ type (
 		GetAllHotel(ctx context.Context, req dto.PaginationRequest) (dto.GetHotelRepositoryResponse, error)
 		GetHotelById(ctx context.Context, hotelId string) (dto.HotelResponse, error)
 		DeleteHotel(ctx context.Context, hotelId string) error
+		CityList(ctx context.Context) ([]string, error)
+		GetHotelByCity(ctx context.Context, req dto.PaginationRequest, city string) (dto.GetHotelRepositoryResponse, error)
 	}
 
 	hotelService struct {
@@ -136,4 +138,32 @@ func (s *hotelService) DeleteHotel(ctx context.Context, hotelId string) error {
 	}
 
 	return nil
+}
+
+func (s *hotelService) CityList(ctx context.Context) ([]string, error) {
+	cities, err := s.hotelRepo.CityList(ctx, nil)
+	if err != nil {
+		return nil, err
+	}
+
+	return cities, nil
+}
+
+func (s *hotelService) GetHotelByCity(ctx context.Context, req dto.PaginationRequest, city string) (dto.GetHotelRepositoryResponse, error) {
+	hotels, err := s.hotelRepo.GetHotelByCity(ctx, nil, req, city)
+	if err != nil {
+		return dto.GetHotelRepositoryResponse{}, err
+	}
+
+	response := dto.GetHotelRepositoryResponse{
+		Hotels: hotels.Hotels,
+		PaginationResponse: dto.PaginationResponse{
+			Page:    hotels.Page,
+			PerPage: hotels.PerPage,
+			Count:   hotels.Count,
+			MaxPage: hotels.MaxPage,
+		},
+	}
+
+	return response, nil
 }

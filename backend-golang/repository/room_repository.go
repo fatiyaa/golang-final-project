@@ -14,6 +14,7 @@ type (
 		CreateRoom(ctx context.Context, tx *gorm.DB, room entity.Room) (entity.Room, error)
 		UpdateRoom(ctx context.Context, tx *gorm.DB, room entity.Room, roomId string) (entity.Room, error)
 		GetAllRoom(ctx context.Context, tx *gorm.DB, req dto.PaginationRequest) (dto.GetRoomRepositoryResponse, error)
+		GetRoomByHotel(ctx context.Context, tx *gorm.DB, req dto.PaginationRequest, hotelId string) (dto.GetRoomRepositoryResponse, error)
 		GetRoomById(ctx context.Context, tx *gorm.DB, roomId string) (entity.Room, error)
 		DeleteRoom(ctx context.Context, tx *gorm.DB, roomId string) error
 	}
@@ -71,7 +72,9 @@ func (r *roomRepository) GetAllRoom(ctx context.Context, tx *gorm.DB, req dto.Pa
 	}
 
 	tx = tx.WithContext(ctx)
-	tx.Model(&entity.Room{}).Count(&count)
+	if err = tx.Model(&entity.Room{}).Count(&count).Error; err != nil {
+		return dto.GetRoomRepositoryResponse{}, err
+	}
 
 	if err = tx.WithContext(ctx).Preload("Hotel").Limit(req.PerPage).Offset((req.Page - 1) * req.PerPage).Find(&rooms).Error; err != nil {
 		return dto.GetRoomRepositoryResponse{}, err
@@ -92,6 +95,48 @@ func (r *roomRepository) GetAllRoom(ctx context.Context, tx *gorm.DB, req dto.Pa
 
 	return response, nil
 }
+
+func (r *roomRepository) GetRoomByHotel(ctx context.Context, tx *gorm.DB, req dto.PaginationRequest, hotelId string) (dto.GetRoomRepositoryResponse, error) {
+	if tx == nil {
+		tx = r.db
+	}
+
+	var rooms []entity.Room
+	var err error
+	var count int64
+
+	if req.PerPage == 0 {
+		req.PerPage = 10
+	}
+
+	if req.Page == 0 {
+		req.Page = 1
+	}
+
+	tx = tx.WithContext(ctx)
+	if err = tx.Model(&entity.Room{}).Where("hotel_id = ?", hotelId).Count(&count).Error; err != nil {
+		return dto.GetRoomRepositoryResponse{}, err
+	}
+
+	if err = tx.WithContext(ctx).Preload("Hotel").Where("hotel_id = ?", hotelId).Limit(req.PerPage).Offset((req.Page - 1) * req.PerPage).Find(&rooms).Error; err != nil {
+		return dto.GetRoomRepositoryResponse{}, err
+	}
+
+	totalPage := int64(math.Ceil(float64(count) / float64(req.PerPage)))
+
+	response := dto.GetRoomRepositoryResponse{
+		Rooms:  rooms,
+		PaginationResponse: dto.PaginationResponse{
+			Page:    req.Page,
+			PerPage: req.PerPage,
+			MaxPage: totalPage,
+			Count:   count,
+		},
+	}
+
+	return response, nil
+}
+
 
 func (r *roomRepository) GetRoomById(ctx context.Context, tx *gorm.DB, roomId string) (entity.Room, error) {
 	if tx == nil {
