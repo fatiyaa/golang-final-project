@@ -2,7 +2,6 @@ package controller
 
 import (
 	"net/http"
-
 	"github.com/fatiyaa/golang-final-project/dto"
 	"github.com/fatiyaa/golang-final-project/service"
 	"github.com/fatiyaa/golang-final-project/utils"
@@ -12,9 +11,12 @@ import (
 type (
 	OrderController interface {
 		CreateOrder(ctx *gin.Context)
+        UpdateOrderStatus(ctx *gin.Context)
 		GetAllOrder(ctx *gin.Context)
 		GetOrderById(ctx *gin.Context)
         GetAvailRoomByDate(ctx *gin.Context)
+        DeleteOrder(ctx *gin.Context)
+        GetBookedDates(ctx *gin.Context)
 	}
 
 	orderController struct {
@@ -101,5 +103,54 @@ func (c *orderController) GetAvailRoomByDate(ctx *gin.Context) {
     }
 
     res := utils.BuildResponseSuccess(dto.MESSAGE_SUCCESS_GET_AVAIL_ROOM, result)
+    ctx.JSON(http.StatusOK, res)
+}
+
+func (c *orderController) UpdateOrderStatus(ctx *gin.Context) {
+    orderId := ctx.Param("id")
+    status := ctx.Param("status")
+
+    result, err := c.orderService.UpdateOrderStatus(ctx.Request.Context(), orderId, status)
+    if err != nil {
+        res := utils.BuildResponseFailed(dto.MESSAGE_FAILED_UPDATE_ORDER_STATUS, err.Error(), nil)
+        ctx.JSON(http.StatusBadRequest, res)
+        return
+    }
+
+    res := utils.BuildResponseSuccess(dto.MESSAGE_SUCCESS_UPDATE_ORDER_STATUS, result)
+    ctx.JSON(http.StatusOK, res)
+}
+
+func (c *orderController) DeleteOrder(ctx *gin.Context) {
+    orderId := ctx.Param("id")
+
+    if err := c.orderService.DeleteOrder(ctx.Request.Context(), orderId); err != nil {
+        res := utils.BuildResponseFailed(dto.MESSAGE_FAILED_DELETE_ORDER, err.Error(), nil)
+        ctx.AbortWithStatusJSON(http.StatusBadRequest, res)
+        return
+    }
+
+    res := utils.BuildResponseSuccess(dto.MESSAGE_SUCCESS_DELETE_ORDER, nil)
+    ctx.JSON(http.StatusOK, res)
+}
+
+func (c *orderController) GetBookedDates(ctx *gin.Context) {
+    roomId := ctx.Param("room_id")
+
+    // Pastikan roomId valid sebelum melanjutkan
+    if roomId == "" {
+        res := utils.BuildResponseFailed(dto.MESSAGE_FAILED_GET_BOOKED_DATES, "Invalid room_id", nil)
+        ctx.JSON(http.StatusBadRequest, res)
+        return
+    }
+
+    blockedDates, err := c.orderService.GetBookedDates(ctx.Request.Context(), roomId)
+    if err != nil {
+        res := utils.BuildResponseFailed(dto.MESSAGE_FAILED_GET_BOOKED_DATES, err.Error(), nil)
+        ctx.JSON(http.StatusBadRequest, res)
+        return
+    }
+
+    res := utils.BuildResponseSuccess(dto.MESSAGE_SUCCESS_GET_BOOKED_DATES, blockedDates)
     ctx.JSON(http.StatusOK, res)
 }

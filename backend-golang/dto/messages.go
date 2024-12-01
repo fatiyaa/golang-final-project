@@ -45,4 +45,13 @@ const (
 
 	MESSAGE_SUCCESS_GET_AVAIL_ROOM = "Successfully get available rooms"
 	MESSAGE_FAILED_GET_AVAIL_ROOM  = "Failed to get available rooms"
+
+	MESSAGE_SUCCESS_UPDATE_ORDER_STATUS = "Order status successfully updated"
+	MESSAGE_FAILED_UPDATE_ORDER_STATUS  = "Failed to update order status"
+
+	MESSAGE_SUCCESS_DELETE_ORDER = "Order successfully deleted"
+	MESSAGE_FAILED_DELETE_ORDER  = "Failed to delete order"
+
+	MESSAGE_SUCCESS_GET_BOOKED_DATES = "Successfully get booked dates"
+	MESSAGE_FAILED_GET_BOOKED_DATES  = "Failed to get booked dates"
 )
