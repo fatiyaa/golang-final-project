@@ -42,4 +42,7 @@ const (
 
 	MESSAGE_SUCCESS_GET_ORDER = "Successfully get order"
 	MESSAGE_FAILED_GET_ORDER  = "Failed to get order"
+
+	MESSAGE_SUCCESS_GET_AVAIL_ROOM = "Successfully get available rooms"
+	MESSAGE_FAILED_GET_AVAIL_ROOM  = "Failed to get available rooms"
 )

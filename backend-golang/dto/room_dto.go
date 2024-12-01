@@ -34,11 +34,17 @@ type (
 		ID          int64  `json:"id"`
 		Name        string `json:"name"`
 		HotelID     int64  `json:"hotel_id"`
+		HotelName   string `json:"hotel_name"`
 		ImageUrl    string `json:"image_url"`
 		Type        string `json:"type"`
 		BasePrice   int64  `json:"base_price"`
 		Quantity    int64  `json:"quantity"`
 		IsAvailable bool   `json:"is_available"`
 		Description string `json:"description"`
+	}
+
+	GetRoomList struct {
+		Rooms []RoomResponse
+		PaginationResponse
 	}
 )

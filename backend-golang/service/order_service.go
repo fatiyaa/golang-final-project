@@ -14,6 +14,7 @@ type (
 		CreateOrder(ctx context.Context, req dto.OrderCreateRequest, userId string) (dto.OrderCreateRequest, error)
 		GetAllOrder(ctx context.Context, req dto.PaginationRequest) (dto.GetOrderRepositoryResponse, error)
 		GetOrderById(ctx context.Context, orderId string) (dto.OrderResponse, error)
+		GetAvailRoomByDate(ctx context.Context, req dto.PaginationRequest, date string) (dto.GetRoomList, error)
 	}
 	orderService struct {
 		orderRepo repository.OrderRepository
@@ -83,3 +84,34 @@ func (s *orderService) GetOrderById(ctx context.Context, orderId string) (dto.Or
 	return response, nil
 }
 
+func (s *orderService) GetAvailRoomByDate(ctx context.Context, req dto.PaginationRequest, date string) (dto.GetRoomList, error) {
+	rooms, err := s.orderRepo.GetAvailRoomByDate(ctx, nil, req, date)
+	if err != nil {
+		return dto.GetRoomList{}, err
+	}
+
+	var listRooms []dto.RoomResponse
+	for _, room := range rooms.Rooms {
+		listRooms = append(listRooms, dto.RoomResponse{
+			ID: room.ID,
+			Name: room.Name,
+			HotelID: room.HotelID,
+			HotelName: room.Hotel.Name,
+			ImageUrl: room.ImageUrl,
+			Type: room.Type,
+			BasePrice: room.BasePrice,
+			Quantity: room.Quantity,
+			IsAvailable: room.IsAvailable,
+			Description: room.Description,
+		})}
+	return dto.GetRoomList{
+		Rooms: listRooms,
+		PaginationResponse: dto.PaginationResponse{
+			Page: rooms.Page,
+			PerPage: rooms.PerPage,
+			Count: rooms.Count,
+			MaxPage: rooms.MaxPage,
+		},
+
+	}, nil
+}

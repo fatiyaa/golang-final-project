@@ -12,6 +12,7 @@ type (
 	RoomService interface {
 		RegisterRoom(ctx context.Context, req dto.RoomCreateRequest) (dto.RoomCreateRequest, error)
 		UpdateRoom(ctx context.Context, req dto.RoomUpdateRequest, roomId string) (dto.RoomUpdateRequest, error)
+		UpdateStatusRoom(ctx context.Context, roomId string) error
 		GetAllRoom(ctx context.Context, req dto.PaginationRequest) (dto.GetRoomRepositoryResponse, error)
 		GetRoomById(ctx context.Context, roomId string) (dto.RoomResponse, error)
 		DeleteRoom(ctx context.Context, roomId string) error
@@ -30,12 +31,12 @@ func NewRoomService(roomRepo repository.RoomRepository) RoomService {
 
 func (s *roomService) RegisterRoom(ctx context.Context, req dto.RoomCreateRequest) (dto.RoomCreateRequest, error) {
 	room := entity.Room{
-		Name:    req.Name,
-		HotelID: req.HotelID,
-		ImageUrl: req.ImageUrl,
-		Type: req.Type,
-		BasePrice: req.BasePrice,
-		Quantity: req.Quantity,
+		Name:        req.Name,
+		HotelID:     req.HotelID,
+		ImageUrl:    req.ImageUrl,
+		Type:        req.Type,
+		BasePrice:   req.BasePrice,
+		Quantity:    req.Quantity,
 		IsAvailable: req.IsAvailable,
 		Description: req.Description,
 	}
@@ -46,12 +47,12 @@ func (s *roomService) RegisterRoom(ctx context.Context, req dto.RoomCreateReques
 	}
 
 	response := dto.RoomCreateRequest{
-		Name: createdRoom.Name,
-		HotelID: createdRoom.HotelID,
-		ImageUrl: createdRoom.ImageUrl,
-		Type: createdRoom.Type,
-		BasePrice: createdRoom.BasePrice,
-		Quantity: createdRoom.Quantity,
+		Name:        createdRoom.Name,
+		HotelID:     createdRoom.HotelID,
+		ImageUrl:    createdRoom.ImageUrl,
+		Type:        createdRoom.Type,
+		BasePrice:   createdRoom.BasePrice,
+		Quantity:    createdRoom.Quantity,
 		IsAvailable: createdRoom.IsAvailable,
 		Description: createdRoom.Description,
 	}
@@ -61,12 +62,12 @@ func (s *roomService) RegisterRoom(ctx context.Context, req dto.RoomCreateReques
 
 func (s *roomService) UpdateRoom(ctx context.Context, req dto.RoomUpdateRequest, roomId string) (dto.RoomUpdateRequest, error) {
 	room := entity.Room{
-		Name:    req.Name,
-		HotelID: req.HotelID,
-		ImageUrl: req.ImageUrl,
-		Type: req.Type,
-		BasePrice: req.BasePrice,
-		Quantity: req.Quantity,
+		Name:        req.Name,
+		HotelID:     req.HotelID,
+		ImageUrl:    req.ImageUrl,
+		Type:        req.Type,
+		BasePrice:   req.BasePrice,
+		Quantity:    req.Quantity,
 		IsAvailable: req.IsAvailable,
 		Description: req.Description,
 	}
@@ -77,12 +78,12 @@ func (s *roomService) UpdateRoom(ctx context.Context, req dto.RoomUpdateRequest,
 	}
 
 	response := dto.RoomUpdateRequest{
-		Name: updatedRoom.Name,
-		HotelID: updatedRoom.HotelID,
-		ImageUrl: updatedRoom.ImageUrl,
-		Type: updatedRoom.Type,
-		BasePrice: updatedRoom.BasePrice,
-		Quantity: updatedRoom.Quantity,
+		Name:        updatedRoom.Name,
+		HotelID:     updatedRoom.HotelID,
+		ImageUrl:    updatedRoom.ImageUrl,
+		Type:        updatedRoom.Type,
+		BasePrice:   updatedRoom.BasePrice,
+		Quantity:    updatedRoom.Quantity,
 		IsAvailable: updatedRoom.IsAvailable,
 		Description: updatedRoom.Description,
 	}
@@ -99,6 +100,25 @@ func (s *roomService) GetAllRoom(ctx context.Context, req dto.PaginationRequest)
 	return rooms, nil
 }
 
+func (s *roomService) UpdateStatusRoom(ctx context.Context, roomId string) error {
+	room, err := s.GetRoomById(ctx, roomId)
+	if err != nil {
+		return err
+	}
+	if room.IsAvailable {
+		room.IsAvailable = false
+	} else {
+		room.IsAvailable = true
+	}
+	_, err = s.UpdateRoom(ctx, dto.RoomUpdateRequest{
+		IsAvailable: room.IsAvailable,
+	}, roomId)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
 func (s *roomService) GetRoomById(ctx context.Context, roomId string) (dto.RoomResponse, error) {
 	room, err := s.roomRepo.GetRoomById(ctx, nil, roomId)
 	if err != nil {
@@ -106,13 +126,14 @@ func (s *roomService) GetRoomById(ctx context.Context, roomId string) (dto.RoomR
 	}
 
 	return dto.RoomResponse{
-		ID: room.ID,
-		Name: room.Name,
-		HotelID: room.HotelID,
-		ImageUrl: room.ImageUrl,
-		Type: room.Type,
-		BasePrice: room.BasePrice,
-		Quantity: room.Quantity,
+		ID:          room.ID,
+		Name:        room.Name,
+		HotelID:     room.HotelID,
+		HotelName:   room.Hotel.Name,
+		ImageUrl:    room.ImageUrl,
+		Type:        room.Type,
+		BasePrice:   room.BasePrice,
+		Quantity:    room.Quantity,
 		IsAvailable: room.IsAvailable,
 		Description: room.Description,
 	}, nil

@@ -13,5 +13,6 @@ func Order(route *gin.Engine, orderController controller.OrderController, jwtSer
 		routes.POST("", middleware.Authenticate(jwtService), orderController.CreateOrder)
 		routes.GET("", middleware.Authenticate(jwtService), orderController.GetAllOrder)
 		routes.GET("/:id", middleware.Authenticate(jwtService), orderController.GetOrderById)
+		routes.GET("available/:date", orderController.GetAvailRoomByDate)
 	}
 }
