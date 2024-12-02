@@ -1,93 +1,22 @@
-## Prerequisite 🏆
+# Backend Layer
 
-- Go Version `>= go 1.20`
-- PostgreSQL Version `>= version 15.0`
+## How to run the backend
 
-## How To Use
+1. Make sure to have go by `go version` and the database using PostgreSQL
+2. Copy the .env.example
 
-There are 2 ways to do running
-
-### With Docker
-
-1. Copy the example environment file and configure it:
-
-```bash
-cp.env.example .env
 ```
-
-2. Build Docker
-
-```bash
-docker-compose build --no-cache
-```
-
-3. Run Docker Compose
-
-```bash
-docker compose up -d
-```
-
-### Without Docker
-
-1. Clone the repository
-
-```bash
-git clone https://github.com/fatiyaa/golang-final-project.git
-```
-
-2. Navigate to the project directory:
-
-```bash
-cd go-gin-clean-starter
-```
-
-3. Copy the example environment file and configure it:
-
-```bash
 cp .env.example .env
 ```
 
-4. Configure `.env` with your PostgreSQL credentials:
+3. Configure the database env in the env file
+4. Setup your database
+5. Run the backend app
+   - Make sure that you are in the `/backend` level when runing the app
 
-```bash
-DB_HOST=localhost
-DB_USER=postgres
-DB_PASS=
-DB_NAME=
-DB_PORT=5432
 ```
-
-5. Open the terminal and follow these steps:
-
-- If you haven't downloaded PostgreSQL, download it first.
-- Run:
-  ```bash
-  psql -U postgres
-  ```
-- Create the database according to what you put in `.env`
-  ```bash
-  CREATE DATABASE your_database;
-  ```
-
-6. Run the application:
-
-```bash
 go run main.go
 ```
-
-## Run Migrations, Seeder, and Script
-
-To run migrations, seed the database, and execute a script while keeping the application running, use the following command:
-
-```bash
-go run main.go --migrate --seed --run --script:example_script
-```
-
-- `--migrate` will apply all pending migrations.
-- `--seed` will seed the database with initial data.
-- `--script:example_script` will run the specified script (replace `example_script` with your script name).
-- `--run` will ensure the application continues running after executing the commands above.
-- `--fresh` will drop the tables and reapply the migration
 
 #### Migrate Database
 
@@ -118,18 +47,6 @@ go run main.go --fresh
 ```
 
 This command will reapply all migrations to your PostgreSQL database specified in `.env`
-
-#### Script Run
-
-To run a specific script:
-
-```bash
-go run main.go --script:example_script
-```
-
-Replace `example_script` with the actual script name in **script.go** at script folder
-
-If you need the application to continue running after performing migrations, seeding, or executing a script, always append the `--run` option.
 
 ### Postman Documentation
 

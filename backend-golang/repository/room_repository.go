@@ -144,7 +144,7 @@ func (r *roomRepository) GetRoomById(ctx context.Context, tx *gorm.DB, roomId st
 	}
 
 	var room entity.Room
-	if err := tx.WithContext(ctx).Where("id = ?", roomId).Take(&room).Error; err != nil {
+	if err := tx.WithContext(ctx).Preload("Hotel").Where("id = ?", roomId).Take(&room).Error; err != nil {
 		return entity.Room{}, err
 	}
 

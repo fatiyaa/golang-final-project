@@ -13,55 +13,119 @@ import (
 
 type (
 	OrderService interface {
-		CreateOrder(ctx context.Context, req dto.OrderCreateRequest, userId string) (dto.OrderCreateRequest, error)
+		CreateOrder(ctx context.Context, req dto.OrderCreateRequest, userId string) (dto.OrderCreateResponse, error)
 		UpdateOrderStatus(ctx context.Context, orderId string, status string) (string, error)
 		GetAllOrder(ctx context.Context, req dto.PaginationRequest) (dto.GetOrderResponse, error)
 		GetOrderByUserId(ctx context.Context, req dto.PaginationRequest, userId string) (dto.GetOrderResponse, error)
-		GetOrderById(ctx context.Context, orderId string) (dto.OrderResponse, error)
+		GetOrderById(ctx context.Context, orderId string) (dto.OrderSingleResponse, error)
 		GetAvailRoomByDate(ctx context.Context, req dto.PaginationRequest, date string) (dto.GetRoomList, error)
 		DeleteOrder(ctx context.Context, orderId string) error
 		GetBookedDates(ctx context.Context, roomId string) ([]time.Time, error)
 	}
 	orderService struct {
-		orderRepo repository.OrderRepository
+		orderRepo        repository.OrderRepository
+		orderRoomService OrderRoomService
 	}
 )
 
-func NewOrderService(orderRepo repository.OrderRepository) OrderService {
+func NewOrderService(orderRepo repository.OrderRepository, orderRoomService OrderRoomService) OrderService {
 	return &orderService{
-		orderRepo: orderRepo,
+		orderRepo:        orderRepo,
+		orderRoomService: orderRoomService,
 	}
 }
 
-func (s *orderService) CreateOrder(ctx context.Context, req dto.OrderCreateRequest, userId string) (dto.OrderCreateRequest, error) {
+func (s *orderService) CreateOrder(ctx context.Context, req dto.OrderCreateRequest, userId string) (dto.OrderCreateResponse, error) {
 
 	userIDInt, err := strconv.ParseInt(userId, 10, 64)
 	if err != nil {
-		return dto.OrderCreateRequest{}, err
+		return dto.OrderCreateResponse{}, err
 	}
 
 	if req.DateStart > req.DateEnd {
-		return dto.OrderCreateRequest{}, fmt.Errorf("date start must be before date end")
+		return dto.OrderCreateResponse{}, fmt.Errorf("date start must be before date end")
 	}
+
+	startDate, err := time.Parse("2006-01-02", req.DateStart)
+	if err != nil {
+		return dto.OrderCreateResponse{}, err
+	}
+
+	endDate, err := time.Parse("2006-01-02", req.DateEnd)
+	if err != nil {
+		return dto.OrderCreateResponse{}, err
+	}
+
+	days := int64(endDate.Sub(startDate).Hours()) / 24
 
 	order := entity.Order{
 		UserID:    int64(userIDInt),
-		RoomID:    req.RoomID,
+		RentType:  req.RentType,
+		People:    req.People,
 		Status:    "PENDING",
 		DateStart: req.DateStart,
 		DateEnd:   req.DateEnd,
+		Days:      days,
 		Note:      req.Note,
 	}
 	createdOrder, err := s.orderRepo.CreateOrder(ctx, nil, order)
 	if err != nil {
-		return dto.OrderCreateRequest{}, err
+		return dto.OrderCreateResponse{}, err
 	}
 
-	response := dto.OrderCreateRequest{
-		RoomID:    createdOrder.RoomID,
-		DateStart: createdOrder.DateStart,
-		DateEnd:   createdOrder.DateEnd,
-		Note:      createdOrder.Note,
+	for _, roomId := range req.RoomID {
+		orderRoom := dto.OrderRoomCreateRequest{
+			OrderID: createdOrder.ID,
+			RoomID:  roomId,
+		}
+		_, err := s.orderRoomService.InsertOrderRoom(ctx, orderRoom)
+		if err != nil {
+			// Rollback order
+			err := s.orderRepo.DeleteOrder(ctx, nil, fmt.Sprintf("%d", createdOrder.ID))
+			if err != nil {
+				return dto.OrderCreateResponse{}, err
+			}
+			return dto.OrderCreateResponse{}, err
+		}
+	}
+
+	roomOrdered, err := s.orderRoomService.GetRoomByOrderId(ctx, createdOrder.ID)
+	if err != nil {
+		return dto.OrderCreateResponse{}, err
+	}
+
+	var totalPrice, maxCapacity int64
+	for _, room := range roomOrdered.Rooms {
+		totalPrice += room.BasePrice * days
+		maxCapacity += room.Capacity
+	}
+
+	if maxCapacity < req.People {
+		err := s.orderRepo.DeleteOrder(ctx, nil, fmt.Sprintf("%d", createdOrder.ID))
+		if err != nil {
+			return dto.OrderCreateResponse{}, err
+		}
+		return dto.OrderCreateResponse{}, fmt.Errorf("total capacity of rooms is not enough")
+	}
+
+	_, err = s.orderRepo.UpdateTotalPrice(ctx, nil, totalPrice, fmt.Sprintf("%d", createdOrder.ID))
+	if err != nil {
+		return dto.OrderCreateResponse{}, err
+	}
+
+	response := dto.OrderCreateResponse{
+		ID:         createdOrder.ID,
+		UserID:     createdOrder.UserID,
+		RentType:   createdOrder.RentType,
+		People:     createdOrder.People,
+		Room:       roomOrdered.Rooms,
+		RoomTotal:  roomOrdered.Count,
+		Status:     createdOrder.Status,
+		DateStart:  createdOrder.DateStart,
+		DateEnd:    createdOrder.DateEnd,
+		Days:       createdOrder.Days,
+		Note:       createdOrder.Note,
+		TotalPrice: totalPrice,
 	}
 
 	return response, nil
@@ -73,46 +137,9 @@ func (s *orderService) GetAllOrder(ctx context.Context, req dto.PaginationReques
 		return dto.GetOrderResponse{}, err
 	}
 
-	var listOrders []dto.OrderResponse
-	for _, order := range orders.Orders {
-		startDate, err := time.Parse("2006-01-02", order.DateStart)
-		if err != nil {
-			return dto.GetOrderResponse{}, err
-		}
-		endDate, err := time.Parse("2006-01-02", order.DateEnd)
-		if err != nil {
-			return dto.GetOrderResponse{}, err
-		}
-		price := order.Room.BasePrice * ((int64(endDate.Sub(startDate).Hours()) / 24) + 1)
-
-		var roomName string
-		if order.Room.Name == "" {
-			roomName = "Room deleted"
-		} else {
-			roomName = order.Room.Name
-		}
-
-		var hotelName string
-		if order.Room.Hotel.Name == "" {
-			hotelName = "Room or Hotel deleted"
-		} else {
-			hotelName = order.Room.Hotel.Name
-		}
-
-		listOrders = append(listOrders, dto.OrderResponse{
-			ID:        order.ID,
-			UserID:    order.UserID,
-			Username:  order.User.Name,
-			RoomID:    order.RoomID,
-			RoomName:  roomName,
-			HotelID:   order.Room.HotelID,
-			HotelName: hotelName,
-			Status:    order.Status,
-			DateStart: order.DateStart,
-			DateEnd:   order.DateEnd,
-			Note:      order.Note,
-			Price:     price,
-		})
+	listOrders, err := s.OrderProcessing(ctx, orders)
+	if err != nil {
+		return dto.GetOrderResponse{}, err
 	}
 
 	return dto.GetOrderResponse{
@@ -133,46 +160,9 @@ func (s *orderService) GetOrderByUserId(ctx context.Context, req dto.PaginationR
 		return dto.GetOrderResponse{}, err
 	}
 
-	var listOrders []dto.OrderResponse
-	for _, order := range orders.Orders {
-		startDate, err := time.Parse("2006-01-02", order.DateStart)
-		if err != nil {
-			return dto.GetOrderResponse{}, err
-		}
-		endDate, err := time.Parse("2006-01-02", order.DateEnd)
-		if err != nil {
-			return dto.GetOrderResponse{}, err
-		}
-		price := order.Room.BasePrice * ((int64(endDate.Sub(startDate).Hours()) / 24) + 1)
-
-		var roomName string
-		if order.Room.Name == "" {
-			roomName = "Room deleted"
-		} else {
-			roomName = order.Room.Name
-		}
-
-		var hotelName string
-		if order.Room.Hotel.Name == "" {
-			hotelName = "Room or Hotel deleted"
-		} else {
-			hotelName = order.Room.Hotel.Name
-		}
-
-		listOrders = append(listOrders, dto.OrderResponse{
-			ID:        order.ID,
-			UserID:    order.UserID,
-			Username:  order.User.Name,
-			RoomID:    order.RoomID,
-			RoomName:  roomName,
-			HotelID:   order.Room.HotelID,
-			HotelName: hotelName,
-			Status:    order.Status,
-			DateStart: order.DateStart,
-			DateEnd:   order.DateEnd,
-			Note:      order.Note,
-			Price:     price,
-		})
+	listOrders, err := s.OrderProcessing(ctx, orders)
+	if err != nil {
+		return dto.GetOrderResponse{}, err
 	}
 
 	return dto.GetOrderResponse{
@@ -186,36 +176,35 @@ func (s *orderService) GetOrderByUserId(ctx context.Context, req dto.PaginationR
 	}, nil
 }
 
-
-func (s *orderService) GetOrderById(ctx context.Context, orderId string) (dto.OrderResponse, error) {
+func (s *orderService) GetOrderById(ctx context.Context, orderId string) (dto.OrderSingleResponse, error) {
 	order, err := s.orderRepo.GetOrderById(ctx, nil, orderId)
 	if err != nil {
-		return dto.OrderResponse{}, err
+		return dto.OrderSingleResponse{}, err
 	}
 
-	startDate, err := time.Parse("2006-01-02", order.DateStart)
+	rooms, err := s.orderRoomService.GetRoomByOrderId(ctx, order.ID)
 	if err != nil {
-		return dto.OrderResponse{}, err
+		return dto.OrderSingleResponse{}, err
 	}
-	endDate, err := time.Parse("2006-01-02", order.DateEnd)
-	if err != nil {
-		return dto.OrderResponse{}, err
-	}
-	price := order.Room.BasePrice * ((int64(endDate.Sub(startDate).Hours()) / 24) + 1)
 
-	response := dto.OrderResponse{
-		ID:        order.ID,
-		UserID:    order.UserID,
-		Username:  order.User.Name,
-		RoomID:    order.RoomID,
-		RoomName:  order.Room.Name,
-		HotelID:   order.Room.HotelID,
-		HotelName: order.Room.Hotel.Name,
-		Status:    order.Status,
-		DateStart: order.DateStart,
-		DateEnd:   order.DateEnd,
-		Note:      order.Note,
-		Price:     price,
+	orderedRooms, err := SingleRoomProcessing(rooms)
+	if err != nil {
+		return dto.OrderSingleResponse{}, err
+	}
+
+	response := dto.OrderSingleResponse{
+		ID:         order.ID,
+		UserID:     order.UserID,
+		Username:   order.User.Name,
+		Room:       orderedRooms,
+		RoomTotal:  rooms.Count,
+		RentType:   order.RentType,
+		People:     order.People,
+		Status:     order.Status,
+		DateStart:  order.DateStart,
+		DateEnd:    order.DateEnd,
+		Note:       order.Note,
+		TotalPrice: order.TotalPrice,
 	}
 
 	return response, nil
@@ -237,8 +226,7 @@ func (s *orderService) GetAvailRoomByDate(ctx context.Context, req dto.Paginatio
 			ImageUrl:    room.ImageUrl,
 			Type:        room.Type,
 			BasePrice:   room.BasePrice,
-			Quantity:    room.Quantity,
-			IsAvailable: room.IsAvailable,
+			Capacity:    room.Capacity,
 			Description: room.Description,
 		})
 	}
@@ -270,33 +258,91 @@ func (s *orderService) DeleteOrder(ctx context.Context, orderId string) error {
 }
 
 func (s *orderService) GetBookedDates(ctx context.Context, roomId string) ([]time.Time, error) {
-    bookedDates, err := s.orderRepo.GetBookedDates(ctx, nil, roomId)
-    if err != nil {
-        return nil, err
-    }
+	bookedDates, err := s.orderRepo.GetBookedDates(ctx, nil, roomId)
+	if err != nil {
+		return nil, err
+	}
 
-    currentDate := time.Now()
-    startDate := currentDate.Add(24 * time.Hour) // H+1, yaitu besok
-    endDate := currentDate.Add(30 * 24 * time.Hour) // H+30, yaitu 30 hari ke depan
+	currentDate := time.Now()
+	startDate := currentDate.Add(24 * time.Hour)    // H+1, yaitu besok
+	endDate := currentDate.Add(30 * 24 * time.Hour) // H+30, yaitu 30 hari ke depan
 
-    // Mengubah bookedDates menjadi array tanggal dalam rentang yang dipesan
-    var blockedDates []time.Time
-    for _, order := range bookedDates {
-		fmt.Println(order.DateStart)
+	// Mengubah bookedDates menjadi array tanggal dalam rentang yang dipesan
+	var blockedDates []time.Time
+	for _, order := range bookedDates {
 
 		for date := order.DateStart; date.Before(order.DateEnd) || date.Equal(order.DateEnd); date = date.AddDate(0, 0, 1) {
-			fmt.Println("Loop Date:", date)
 			if date.After(startDate.AddDate(0, 0, -1)) && date.Before(endDate.AddDate(0, 0, 1)) {
-				fmt.Println("Blocked Date:", date)
 				blockedDates = append(blockedDates, date)
 			}
 		}
-    }
+	}
 
-    // fmt.Println(blockedDates)
-
-    return blockedDates, nil
+	return blockedDates, nil
 }
 
+func SingleRoomProcessing(rooms dto.OrderRoomData) ([]dto.RoomResponse, error) {
+	var orderedRooms []dto.RoomResponse
+	for _, room := range rooms.Rooms {
+		var roomName string
+		if room.Name == "" {
+			roomName = "Room deleted"
+		} else {
+			roomName = room.Name
+		}
 
+		var hotelName string
+		if room.HotelName == "" {
+			hotelName = "Room or Hotel deleted"
+		} else {
+			hotelName = room.HotelName
+		}
 
+		orderedRooms = append(orderedRooms, dto.RoomResponse{
+			ID:          room.ID,
+			Name:        roomName,
+			HotelID:     room.HotelID,
+			HotelName:   hotelName,
+			ImageUrl:    room.ImageUrl,
+			Type:        room.Type,
+			BasePrice:   room.BasePrice,
+			Capacity:    room.Capacity,
+			Description: room.Description,
+		})
+	}
+
+	return orderedRooms, nil
+}
+
+func (s *orderService) OrderProcessing(ctx context.Context, orders dto.GetOrderRepositoryResponse) ([]dto.OrderSingleResponse, error) {
+	var listOrders []dto.OrderSingleResponse
+	for _, order := range orders.Orders {
+		rooms, err := s.orderRoomService.GetRoomByOrderId(ctx, order.ID)
+		if err != nil {
+			return []dto.OrderSingleResponse{}, err
+		}
+
+		orderedRooms, err := SingleRoomProcessing(rooms)
+		if err != nil {
+			return []dto.OrderSingleResponse{}, err
+		}
+
+		listOrders = append(listOrders, dto.OrderSingleResponse{
+			ID:          order.ID,
+			UserID:      order.UserID,
+			Username:    order.User.Name,
+			Room:        orderedRooms,
+			RoomTotal:   rooms.Count,
+			RentType:    order.RentType,
+			People:      order.People,
+			Status:      order.Status,
+			DateStart:   order.DateStart,
+			DateEnd:     order.DateEnd,
+			Note:        order.Note,
+			TotalPrice:  order.TotalPrice,
+		})
+	}
+
+	return listOrders, nil
+
+}

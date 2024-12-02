@@ -4,8 +4,7 @@
       "name": "Standard Room 101",
       "type": "STANDARD",
       "base_price": 150000,
-      "quantity": 5,
-      "is_available": true,
+      "capacity": 5,
       "description": "A comfortable standard room for 2 people."
     },
     {
@@ -13,8 +12,7 @@
       "name": "Deluxe Room 102",
       "type": "DELUXE",
       "base_price": 250000,
-      "quantity": 3,
-      "is_available": true,
+      "capacity": 3,
       "description": "A luxurious deluxe room with a city view for 3 people."
     },
     {
@@ -22,8 +20,7 @@
       "name": "Suite Room 201",
       "type": "SUITE",
       "base_price": 500000,
-      "quantity": 2,
-      "is_available": true,
+      "capacity": 2,
       "description": "A spacious suite with modern amenities and a king-size bed."
     },
     {
@@ -31,8 +28,7 @@
       "name": "Presidential Room 301",
       "type": "PRESIDENTIAL",
       "base_price": 1000000,
-      "quantity": 1,
-      "is_available": false,
+      "capacity": 1,
       "description": "An extravagant presidential suite with luxury features."
     },
     {
@@ -40,8 +36,7 @@
       "name": "Deluxe Room 401",
       "type": "DELUXE",
       "base_price": 300000,
-      "quantity": 4,
-      "is_available": true,
+      "capacity": 4,
       "description": "A spacious deluxe room with a great view of the beach."
     }
   ]

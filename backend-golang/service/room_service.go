@@ -15,7 +15,6 @@ type (
 	RoomService interface {
 		RegisterRoom(ctx context.Context, req dto.RoomCreateRequest) (dto.RoomCreateRequest, error)
 		UpdateRoom(ctx context.Context, req dto.RoomUpdateRequest, roomId string) (dto.RoomUpdateRequest, error)
-		UpdateStatusRoom(ctx context.Context, roomId string) error
 		GetAllRoom(ctx context.Context, req dto.PaginationRequest) (dto.GetRoomList, error)
 		GetRoomByHotel(ctx context.Context, req dto.PaginationRequest, hotelId string) (dto.GetRoomList, error)
 		GetRoomById(ctx context.Context, roomId string) (dto.RoomResponse, error)
@@ -53,8 +52,7 @@ func (s *roomService) RegisterRoom(ctx context.Context, req dto.RoomCreateReques
 		ImageUrl:    filename,
 		Type:        req.Type,
 		BasePrice:   req.BasePrice,
-		Quantity:    req.Quantity,
-		IsAvailable: req.IsAvailable,
+		Capacity:    req.Capacity,
 		Description: req.Description,
 	}
 
@@ -69,8 +67,7 @@ func (s *roomService) RegisterRoom(ctx context.Context, req dto.RoomCreateReques
 		ImageUrl:    createdRoom.ImageUrl,
 		Type:        createdRoom.Type,
 		BasePrice:   createdRoom.BasePrice,
-		Quantity:    createdRoom.Quantity,
-		IsAvailable: createdRoom.IsAvailable,
+		Capacity:    createdRoom.Capacity,
 		Description: createdRoom.Description,
 	}
 
@@ -102,15 +99,13 @@ func (s *roomService) UpdateRoom(ctx context.Context, req dto.RoomUpdateRequest,
 		filename = roomData.ImageUrl
 	}
 
-
 	room := entity.Room{
 		Name:        req.Name,
 		HotelID:     req.HotelID,
 		ImageUrl:    filename,
 		Type:        req.Type,
 		BasePrice:   req.BasePrice,
-		Quantity:    req.Quantity,
-		IsAvailable: req.IsAvailable,
+		Capacity:    req.Capacity,
 		Description: req.Description,
 	}
 
@@ -125,8 +120,7 @@ func (s *roomService) UpdateRoom(ctx context.Context, req dto.RoomUpdateRequest,
 		ImageUrl:    updatedRoom.ImageUrl,
 		Type:        updatedRoom.Type,
 		BasePrice:   updatedRoom.BasePrice,
-		Quantity:    updatedRoom.Quantity,
-		IsAvailable: updatedRoom.IsAvailable,
+		Capacity:    updatedRoom.Capacity,
 		Description: updatedRoom.Description,
 	}
 
@@ -149,8 +143,7 @@ func (s *roomService) GetAllRoom(ctx context.Context, req dto.PaginationRequest)
 			ImageUrl:    room.ImageUrl,
 			Type:        room.Type,
 			BasePrice:   room.BasePrice,
-			Quantity:    room.Quantity,
-			IsAvailable: room.IsAvailable,
+			Capacity:    room.Capacity,
 			Description: room.Description,
 		})
 	}
@@ -184,8 +177,7 @@ func (s *roomService) GetRoomByHotel(ctx context.Context, req dto.PaginationRequ
 			ImageUrl:    room.ImageUrl,
 			Type:        room.Type,
 			BasePrice:   room.BasePrice,
-			Quantity:    room.Quantity,
-			IsAvailable: room.IsAvailable,
+			Capacity:    room.Capacity,
 			Description: room.Description,
 		})
 	}
@@ -203,25 +195,6 @@ func (s *roomService) GetRoomByHotel(ctx context.Context, req dto.PaginationRequ
 	return response, nil
 }
 
-func (s *roomService) UpdateStatusRoom(ctx context.Context, roomId string) error {
-	room, err := s.GetRoomById(ctx, roomId)
-	if err != nil {
-		return err
-	}
-	if room.IsAvailable {
-		room.IsAvailable = false
-	} else {
-		room.IsAvailable = true
-	}
-	_, err = s.UpdateRoom(ctx, dto.RoomUpdateRequest{
-		IsAvailable: room.IsAvailable,
-	}, roomId)
-	if err != nil {
-		return err
-	}
-	return nil
-}
-
 func (s *roomService) GetRoomById(ctx context.Context, roomId string) (dto.RoomResponse, error) {
 	room, err := s.roomRepo.GetRoomById(ctx, nil, roomId)
 	if err != nil {
@@ -236,8 +209,7 @@ func (s *roomService) GetRoomById(ctx context.Context, roomId string) (dto.RoomR
 		ImageUrl:    room.ImageUrl,
 		Type:        room.Type,
 		BasePrice:   room.BasePrice,
-		Quantity:    room.Quantity,
-		IsAvailable: room.IsAvailable,
+		Capacity:    room.Capacity,
 		Description: room.Description,
 	}, nil
 }

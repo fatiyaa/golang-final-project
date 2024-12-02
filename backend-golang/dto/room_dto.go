@@ -14,8 +14,7 @@ type (
 		Image       *multipart.FileHeader `json:"image" form:"image"`         // Untuk menangani file gambar yang diupload
 		Type        string                `json:"type" binding:"required" form:"type"`
 		BasePrice   int64                 `json:"base_price" binding:"required" form:"base_price"`
-		Quantity    int64                 `json:"quantity" binding:"required" form:"quantity"`
-		IsAvailable bool                  `json:"is_available" binding:"required" form:"is_available"`
+		Capacity    int64                 `json:"capacity" binding:"required" form:"capacity"`
 		Description string                `json:"description" form:"description"`
 	}
 
@@ -26,8 +25,7 @@ type (
 		ImageUrl    string                `json:"image_url" form:"image_url"`       // URL gambar kamar
 		Type        string                `json:"type" form:"type"`                 // Tipe kamar
 		BasePrice   int64                 `json:"base_price" form:"base_price"`     // Harga dasar kamar
-		Quantity    int64                 `json:"quantity" form:"quantity"`         // Jumlah kamar
-		IsAvailable bool                  `json:"is_available" form:"is_available"` // Ketersediaan kamar
+		Capacity    int64                 `json:"capacity" form:"capacity"`         // Jumlah kamar
 		Description string                `json:"description" form:"description"`   // Deskripsi kamar
 	}
 
@@ -44,8 +42,7 @@ type (
 		ImageUrl    string `json:"image_url"`
 		Type        string `json:"type"`
 		BasePrice   int64  `json:"base_price"`
-		Quantity    int64  `json:"quantity"`
-		IsAvailable bool   `json:"is_available"`
+		Capacity    int64  `json:"capacity"`
 		Description string `json:"description"`
 	}
 

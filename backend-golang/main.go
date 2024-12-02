@@ -35,12 +35,14 @@ func main() {
 		hotelRepository repository.HotelRepository = repository.NewHotelRepository(db)
 		roomRepository repository.RoomRepository = repository.NewRoomRepository(db)
 		orderRepository repository.OrderRepository = repository.NewOrderRepository(db)
+		orderRoomRepository repository.OrderRoomRepository = repository.NewOrderRoomRepository(db)
 
 		// Service
 		userService service.UserService = service.NewUserService(userRepository, jwtService)
 		hotelService service.HotelService = service.NewHotelService(hotelRepository)
 		roomService service.RoomService = service.NewRoomService(roomRepository)
-		orderService service.OrderService = service.NewOrderService(orderRepository)
+		orderRoomService service.OrderRoomService = service.NewOrderRoomService(orderRoomRepository, roomService)
+		orderService service.OrderService = service.NewOrderService(orderRepository, orderRoomService)
 
 		// Controller
 		userController controller.UserController = controller.NewUserController(userService)

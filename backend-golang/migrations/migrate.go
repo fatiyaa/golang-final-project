@@ -33,11 +33,23 @@ func Migrate(db *gorm.DB) error {
 		}
 	}
 
+	if !typeExists(db, "rent_type") {
+		if err := db.Exec(`CREATE TYPE rent_type AS ENUM (
+		'ADULT',
+		'CHILD',
+		'BOTH'
+	)`).Error; err != nil {
+			log.Printf("Failed to create enum type: %v", err)
+			return err
+		}
+	}
+
 	if err := db.AutoMigrate(
 		&entity.User{},
 		&entity.Hotel{},
 		&entity.Room{},
 		&entity.Order{},
+		&entity.OrderRoom{},
 	); err != nil {
 		return err
 	}
@@ -51,6 +63,7 @@ func dropAllTables(db *gorm.DB) error {
 		&entity.Hotel{},
 		&entity.Room{},
 		&entity.Order{},
+		&entity.OrderRoom{},
 	); err != nil {
 		return err
 	}

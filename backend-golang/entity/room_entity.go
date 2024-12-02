@@ -7,13 +7,12 @@ type Room struct {
 	ImageUrl    string `json:"image_url"`
 	Type        string `json:"type"`
 	BasePrice   int64  `json:"base_price"`
-	Quantity    int64  `json:"quantity"`
-	IsAvailable bool   `json:"is_available"`
+	Capacity    int64  `json:"capacity"`
 	Description string `json:"description"`
 
-	Hotel Hotel `json:"hotel"`
+	Hotel Hotel `json:"hotel" gorm:"foreignKey:HotelID"`
 
-	Orders []Order `json:"orders"`
+	OrderRooms []OrderRoom `json:"order_rooms"`
 
 	Timestamp
 }

@@ -39,6 +39,10 @@ func SeedAll(db *gorm.DB) error {
 		return err
 	}
 
+	if err := seedOrderRooms(db, "./migrations/json/order_rooms.json"); err != nil {
+		return err
+	}
+
 	return nil
 }
 
@@ -52,6 +56,10 @@ func seedRooms(db *gorm.DB, filePath string) error {
 
 func seedOrders(db *gorm.DB, filePath string) error {
 	return seedData[entity.Order](db, filePath)
+}
+
+func seedOrderRooms(db *gorm.DB, filePath string) error {
+	return seedData[entity.OrderRoom](db, filePath)
 }
 
 // Generic function to handle seeding for different entitys
@@ -96,6 +104,8 @@ func getId(record interface{}) int64 {
 	case entity.Room:
 		return v.ID
 	case entity.Order:
+		return v.ID
+	case entity.OrderRoom:
 		return v.ID
 	default:
 		return 0
