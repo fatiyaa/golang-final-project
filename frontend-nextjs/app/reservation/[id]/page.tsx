@@ -26,6 +26,7 @@ const RoomDetails = () => {
   const [roomDetails, setRoomDetails] = useState<any | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [isFloating, setIsFloating] = useState<boolean>(false);
+  const [note, setNote] = useState<string>('');
   const token = Cookies.get('auth_token');
 
   const [guestList, setGuestList] = useState<Guests>({
@@ -72,6 +73,12 @@ const RoomDetails = () => {
     fetchRoomDetails();
   }, [id, guests, selectedDates]);
 
+  const handleNoteChange = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
+    const value = event.target.value;
+    setNote(value);
+    console.log(note);
+  }
+
   const postOrder = async () => {
     try {
       const response = await axios.post(
@@ -80,7 +87,7 @@ const RoomDetails = () => {
           room_id: Number(id),  // Ensure room_id is a number (int64)
           date_start: '2024-12-01',
           date_end: '2024-12-02',
-          note: 'This is a note',
+          note: note,
         },
         {
           headers: {
@@ -238,8 +245,8 @@ const RoomDetails = () => {
           </div>
           <div className="mt-10 text-gray-800">
             <p className="text-left text-sm font-semibold uppercase leading-6 tracking-[0.044rem] text-gray-800/50">Stay Information</p>
-            <p className="border-b border-b-gray-100 py-4 text-left text-sm font-medium leading-5">{formatDate(dates.startDate)} - {formatDate(dates.endDate)} , {calculateNights(dates.startDate, dates.endDate)} Night</p>
-            <p className="border-b border-b-gray-100 py-4 text-left text-sm font-medium leading-5">{guestList.rooms} Room · {guestList.adults} Adult</p>
+            <p className="border-b border-b-gray-100  text-left text-sm font-medium leading-5">{formatDate(dates.startDate)} - {formatDate(dates.endDate)} , {calculateNights(dates.startDate, dates.endDate)} Night</p>
+            <p className="border-b border-b-gray-100 pb-3 text-left text-sm font-medium leading-5">{guestList.rooms} Room · {guestList.adults} Adult</p>
             <div className="border-b bor der-b-gray-100 py-5">
               <div className="flex items-start gap-2">
               <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 -960 960 960" className="h-5 w-5 shrink-0 fill-current text-red-500">
@@ -252,6 +259,7 @@ const RoomDetails = () => {
             </div>
           </div>
           </div>
+          <textarea name="message" placeholder='Notes From You' id="message" className="mb-4 block w-full rounded-md bg-white px-3.5 py-2 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600" onChange={handleNoteChange}></textarea>
           <div className='flex w-full flex-col'>
             <div className="pb-5">
               <p className="text-left text-sm font-semibold uppercase leading-5 tracking-[0.038rem] text-gray-800/50">Price Summary</p>
