@@ -60,8 +60,9 @@ func (s *orderService) CreateOrder(ctx context.Context, req dto.OrderCreateReque
 
 	order := entity.Order{
 		UserID:    int64(userIDInt),
-		RentType:  req.RentType,
-		People:    req.People,
+		Adults:    req.Adults,
+		Children:  req.Children,
+		Infants:   req.Infants,
 		Status:    "PENDING",
 		DateStart: req.DateStart,
 		DateEnd:   req.DateEnd,
@@ -99,8 +100,8 @@ func (s *orderService) CreateOrder(ctx context.Context, req dto.OrderCreateReque
 		totalPrice += room.BasePrice * days
 		maxCapacity += room.Capacity
 	}
-
-	if maxCapacity < req.People {
+	people := createdOrder.Adults + createdOrder.Children
+	if maxCapacity < people {
 		err := s.orderRepo.DeleteOrder(ctx, nil, fmt.Sprintf("%d", createdOrder.ID))
 		if err != nil {
 			return dto.OrderCreateResponse{}, err
@@ -116,8 +117,9 @@ func (s *orderService) CreateOrder(ctx context.Context, req dto.OrderCreateReque
 	response := dto.OrderCreateResponse{
 		ID:         createdOrder.ID,
 		UserID:     createdOrder.UserID,
-		RentType:   createdOrder.RentType,
-		People:     createdOrder.People,
+		Adults:     createdOrder.Adults,
+		Children:   createdOrder.Children,
+		Infants:    createdOrder.Infants,
 		Room:       roomOrdered.Rooms,
 		RoomTotal:  roomOrdered.Count,
 		Status:     createdOrder.Status,
@@ -198,8 +200,9 @@ func (s *orderService) GetOrderById(ctx context.Context, orderId string) (dto.Or
 		Username:   order.User.Name,
 		Room:       orderedRooms,
 		RoomTotal:  rooms.Count,
-		RentType:   order.RentType,
-		People:     order.People,
+		Adults:     order.Adults,
+		Children:   order.Children,
+		Infants:    order.Infants,
 		Status:     order.Status,
 		DateStart:  order.DateStart,
 		DateEnd:    order.DateEnd,
@@ -328,18 +331,19 @@ func (s *orderService) OrderProcessing(ctx context.Context, orders dto.GetOrderR
 		}
 
 		listOrders = append(listOrders, dto.OrderSingleResponse{
-			ID:          order.ID,
-			UserID:      order.UserID,
-			Username:    order.User.Name,
-			Room:        orderedRooms,
-			RoomTotal:   rooms.Count,
-			RentType:    order.RentType,
-			People:      order.People,
-			Status:      order.Status,
-			DateStart:   order.DateStart,
-			DateEnd:     order.DateEnd,
-			Note:        order.Note,
-			TotalPrice:  order.TotalPrice,
+			ID:         order.ID,
+			UserID:     order.UserID,
+			Username:   order.User.Name,
+			Room:       orderedRooms,
+			RoomTotal:  rooms.Count,
+			Adults:     order.Adults,
+			Children:   order.Children,
+			Infants:    order.Infants,
+			Status:     order.Status,
+			DateStart:  order.DateStart,
+			DateEnd:    order.DateEnd,
+			Note:       order.Note,
+			TotalPrice: order.TotalPrice,
 		})
 	}
 

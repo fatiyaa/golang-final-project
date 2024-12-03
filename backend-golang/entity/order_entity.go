@@ -3,8 +3,9 @@ package entity
 type Order struct {
 	ID         int64  `gorm:"primaryKey;autoIncrement" json:"id"`
 	UserID     int64  `json:"user_id"`
-	RentType   string `json:"rent_type"`
-	People     int64  `json:"people"`
+	Adults     int64  `json:"adults"`
+	Children   int64  `json:"children"`
+	Infants    int64  `json:"infants"`
 	Status     string `json:"status"`
 	DateStart  string `json:"date_start"`
 	DateEnd    string `json:"date_end"`
