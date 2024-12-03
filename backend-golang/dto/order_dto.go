@@ -9,7 +9,7 @@ import (
 type (
 	OrderCreateRequest struct {
 		RoomID    []int64 `json:"room_id" form:"room_id" binding:"required"`
-		Adults    int64   `json:"adult" form:"adult" binding:"required"`
+		Adults    int64   `json:"adults" form:"adults" binding:"required"`
 		Children  int64   `json:"children" form:"children" binding:"required"`
 		Infants   int64   `json:"infants" form:"infants" binding:"required"`
 		DateStart string  `json:"date_start" form:"date_start" binding:"required"`
@@ -20,7 +20,7 @@ type (
 	OrderCreateResponse struct {
 		ID         int64          `json:"id"`
 		UserID     int64          `json:"user_id"`
-		Adults     int64          `json:"adult"`
+		Adults     int64          `json:"adults"`
 		Children   int64          `json:"children"`
 		Infants    int64          `json:"infants"`
 		Room       []RoomResponse `json:"room"`
@@ -49,7 +49,7 @@ type (
 		Username   string         `json:"username"`
 		Room       []RoomResponse `json:"room"`
 		RoomTotal  int64          `json:"room_total"`
-		Adults     int64          `json:"adult"`
+		Adults     int64          `json:"adults"`
 		Children   int64          `json:"children"`
 		Infants    int64          `json:"infants"`
 		Status     string         `json:"status"`
