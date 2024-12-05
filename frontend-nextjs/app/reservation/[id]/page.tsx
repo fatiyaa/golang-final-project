@@ -32,8 +32,8 @@ const RoomDetails = () => {
   const [guestList, setGuestList] = useState<Guests>({
     rooms: 0,
     adults: 0,
-    children: 0,
-    infants: 0,
+    children: 1,
+    infants: 1,
   });
   const [dates, setDates] = useState<Range>({
     startDate: new Date(),
@@ -84,7 +84,10 @@ const RoomDetails = () => {
       const response = await axios.post(
         `http://127.0.0.1:8888/api/order`,
         {
-          room_id: Number(id),  // Ensure room_id is a number (int64)
+          room_id: [Number(id)],
+          adults: Number(guestList.adults),
+        children: Number(guestList.children ?? 0),
+        infants: Number(guestList.infants ?? 0),
           date_start: '2024-12-01',
           date_end: '2024-12-02',
           note: note,
@@ -284,7 +287,7 @@ const RoomDetails = () => {
           
           <button 
             onClick={() => postOrder()} 
-            className=" mt-10 mb-5 inline-flex items-center px-4 py-2.5 justify-center whitespace-nowrap rounded-lg transition-colors focus-visible:outline-none focus-visible:ring-1 disabled:pointer-events-none bg-orange-300 focus-visible:ring-orange-700 text-black hover:bg-orange-400 focus:bg-orange-400 mt-7 text-base w-full font-semibold uppercase leading-6 tracking-[0.05rem] shadow-md"
+            className=" mb-5 inline-flex items-center px-4 py-2.5 justify-center whitespace-nowrap rounded-lg transition-colors focus-visible:outline-none focus-visible:ring-1 disabled:pointer-events-none bg-orange-300 focus-visible:ring-orange-700 text-black hover:bg-orange-400 focus:bg-orange-400 mt-7 text-base w-full font-semibold uppercase leading-6 tracking-[0.05rem] shadow-md"
           >
             Order Now
           </button>

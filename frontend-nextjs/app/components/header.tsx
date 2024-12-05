@@ -7,12 +7,17 @@ import Cookies from 'js-cookie';
 export default function Header({ isFixed }: { isFixed: boolean }) {
   const router = useRouter();
   const [hasToken, setHasToken] = useState(false);
+  const [isAdmin, setIsAdmin] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false); // State to control dropdown menu
 
   useEffect(() => {
     const token = Cookies.get('auth_token');
+    const role = Cookies.get('role');
     if (token) {
       setHasToken(true);
+      if (role === 'admin') {
+        setIsAdmin(true);
+      }
     }
   }, [router]);
 
@@ -135,6 +140,16 @@ export default function Header({ isFixed }: { isFixed: boolean }) {
                     className="block py-2 pr-4 pl-3 text-gray-700 border-b border-gray-100 hover:bg-gray-50 lg:hover:bg-transparent lg:border-0 lg:hover:text-primary-700 lg:p-0 dark:text-gray-400 lg:dark:hover:text-white dark:hover:bg-gray-700 dark:hover:text-white lg:dark:hover:bg-transparent dark:border-gray-700"
                   >
                     My Reservation
+                  </a>
+                </li>
+              )}
+              {isAdmin && (
+                <li>
+                  <a
+                    href="/admindashboard"
+                    className="block py-2 pr-4 pl-3 text-gray-700 border-b border-gray-100 hover:bg-gray-50 lg:hover:bg-transparent lg:border-0 lg:hover:text-primary-700 lg:p-0 dark:text-gray-400 lg:dark:hover:text-white dark:hover:bg-gray-700 dark:hover:text-white lg:dark:hover:bg-transparent dark:border-gray-700"
+                  >
+                    Admin Dashboard
                   </a>
                 </li>
               )}

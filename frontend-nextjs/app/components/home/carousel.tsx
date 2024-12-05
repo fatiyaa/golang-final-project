@@ -7,7 +7,7 @@ import 'swiper/css/navigation';
 import 'swiper/css/pagination';
 
 // Import necessary Swiper modules
-import { Navigation, Pagination } from 'swiper/modules';
+import {Autoplay, EffectFade, Navigation, Pagination } from 'swiper/modules';
 
 const images = [
     'https://files.ayana.com/r/kv-01_tzhxlQ_3200x0.webp',
@@ -42,11 +42,15 @@ export default function ImageCarousel() {
             </button>
 
             <Swiper
-                spaceBetween={10}
                 navigation={{ prevEl: '.swiper-button-prev', nextEl: '.swiper-button-next' }}
+                autoplay={{
+                    delay: 2500,
+                    disableOnInteraction: false,
+                  }}
                 pagination={{ clickable: true }}
                 loop
-                modules={[Navigation, Pagination]}
+                modules={[Autoplay, EffectFade, Navigation, Pagination]}
+                
                 className="w-full h-full"
                 ref={swiperRef}
             >
