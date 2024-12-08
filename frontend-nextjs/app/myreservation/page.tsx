@@ -100,7 +100,7 @@ const MyReservation = () => {
   return (
       <div className='flex flex-wrap gap-8 py-9 bg-gray-50 dark:bg-gray-900'>
         {statuses.map((status, index) => (
-          <div key={index} className='mx-auto lg:w-1/3 flex flex-col justify-start h-[31rem] mb-10'>
+          <div key={index} className='mx-auto lg:w-2/5 flex flex-col justify-start h-[31rem] mb-10'>
             <div>
               <p className='text-2xl dark:text-white py-2 font-bold'>{status.label}</p>
             </div>

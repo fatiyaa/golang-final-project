@@ -24,7 +24,7 @@ const Reservation = () => {
 
   const [selectedDates, setSelectedDates] = useState<Range>({
     startDate: new Date(),
-    endDate: new Date(),
+    endDate: new Date(new Date().getFullYear(), new Date().getMonth(), new Date().getDate() + 1),
     key: 'selection',
   });
 

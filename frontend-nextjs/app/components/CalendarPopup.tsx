@@ -30,6 +30,8 @@ export default function CalendarPopup({ selectedDates, setSelectedDates }: Calen
             ranges={[selectedDates]}
             onChange={(range) => setSelectedDates(range.selection)}
             rangeColors={['#f59e0b']}
+            minDate={new Date()}
+            maxDate={new Date(new Date().getFullYear(), new Date().getMonth() + 1, new Date().getDate())}
           />
           <button
             onClick={() => setIsOpen(false)}
