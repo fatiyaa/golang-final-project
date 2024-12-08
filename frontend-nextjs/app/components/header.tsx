@@ -80,7 +80,7 @@ export default function Header({ isFixed }: { isFixed: boolean }) {
 
               {/* Dropdown menu */}
               {isMenuOpen && (
-                <div className="absolute top-9 right-0 mt-2 w-48 bg-white shadow-lg rounded-b-lg border dark:bg-gray-800 dark:border-gray-700">
+                <div className="absolute top-9 right-0 mt-2 w-48 bg-white shadow-lg rounded-b-lg border dark:bg-gray-800 dark:border-gray-700 z-50">
                   <ul className="py-2">
                     <li>
                       <a
