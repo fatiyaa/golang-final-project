@@ -56,6 +56,17 @@ func (s *orderService) CreateOrder(ctx context.Context, req dto.OrderCreateReque
 		return dto.OrderCreateResponse{}, err
 	}
 
+	dates, err := s.GetBookedDates(ctx, strconv.FormatInt(req.RoomID[0], 10))
+	if err != nil {
+		return dto.OrderCreateResponse{}, err
+	}
+
+	for _, date := range dates {
+		if startDate.Before(date) && endDate.After(date) {
+			return dto.OrderCreateResponse{}, fmt.Errorf("room is not available on the selected date")
+		}
+	}
+
 	days := int64(endDate.Sub(startDate).Hours()) / 24
 
 	order := entity.Order{

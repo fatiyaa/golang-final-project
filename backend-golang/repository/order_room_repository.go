@@ -44,7 +44,11 @@ func (r *orderRoomRepository) GetRoomByOrderId(ctx context.Context, tx *gorm.DB,
 
 	var orderRoom []entity.OrderRoom
 
-	if err := tx.WithContext(ctx).Preload("Room").Where("order_id = ?", orderId).Find(&orderRoom).Error; err != nil {
+	if err := tx.WithContext(ctx).
+		Preload("Room").           // Preload Room pada OrderRoom
+		Preload("Room.Hotel").     // Preload Hotel pada Room
+		Where("order_id = ?", orderId).
+		Find(&orderRoom).Error; err != nil {
 		return nil, err
 	}
 

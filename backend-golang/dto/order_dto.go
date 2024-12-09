@@ -10,8 +10,8 @@ type (
 	OrderCreateRequest struct {
 		RoomID    []int64 `json:"room_id" form:"room_id" binding:"required"`
 		Adults    int64   `json:"adults" form:"adults" binding:"required"`
-		Children  int64   `json:"children" form:"children" binding:"required"`
-		Infants   int64   `json:"infants" form:"infants" binding:"required"`
+		Children  int64   `json:"children" form:"children"`
+		Infants   int64   `json:"infants" form:"infants"`
 		DateStart string  `json:"date_start" form:"date_start" binding:"required"`
 		DateEnd   string  `json:"date_end" form:"date_end" binding:"required"`
 		Note      string  `json:"note" form:"note"`

@@ -66,6 +66,7 @@ func (s *orderRoomService) GetRoomByOrderId(ctx context.Context, orderId int64) 
 			ID:          room.Room.ID,
 			Name:        room.Room.Name,
 			HotelID:     room.Room.HotelID,
+			HotelName:   room.Room.Hotel.Name,
 			ImageUrl:    room.Room.ImageUrl,
 			Type:        room.Room.Type,
 			BasePrice:   room.Room.BasePrice,
