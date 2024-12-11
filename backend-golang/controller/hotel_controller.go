@@ -3,9 +3,9 @@ package controller
 import (
 	"net/http"
 
+	"github.com/fatiyaa/golang-final-project/dto"
 	"github.com/fatiyaa/golang-final-project/service"
 	"github.com/fatiyaa/golang-final-project/utils"
-	"github.com/fatiyaa/golang-final-project/dto"
 	"github.com/gin-gonic/gin"
 )
 
@@ -59,7 +59,7 @@ func (c *hotelController) Update(ctx *gin.Context) {
 		ctx.JSON(http.StatusBadRequest, res)
 		return
 	}
-	
+
 	var hotel dto.HotelUpdateRequest
 	if err := ctx.ShouldBind(&hotel); err != nil {
 		res := utils.BuildResponseFailed(dto.MESSAGE_FAILED_GET_DATA_FROM_BODY, err.Error(), nil)
@@ -135,3 +135,21 @@ func (c *hotelController) CityList(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, res)
 }
 
+func (c *hotelController) GetHotelByCity(ctx *gin.Context) {
+	var req dto.PaginationRequest
+	if err := ctx.ShouldBind(&req); err != nil {
+		res := utils.BuildResponseFailed(dto.MESSAGE_FAILED_GET_DATA_FROM_BODY, err.Error(), nil)
+		ctx.AbortWithStatusJSON(http.StatusBadRequest, res)
+		return
+	}
+	city := ctx.Query("city")
+	result, err := c.hotelService.GetHotelByCity(ctx.Request.Context(), req, city)
+	if err != nil {
+		res := utils.BuildResponseFailed(dto.MESSAGE_FAILED_GET_HOTEL, err.Error(), nil)
+		ctx.JSON(http.StatusBadRequest, res)
+		return
+	}
+
+	res := utils.BuildResponseSuccess(dto.MESSAGE_SUCCESS_GET_HOTEL, result)
+	ctx.JSON(http.StatusOK, res)
+}
