@@ -40,12 +40,11 @@ export default function RoomSelector({
 
   const fetchRoomData = async (token: string) => {
     try {
+      console.log('Fetching room data');
+      console.log(formatDate(new Date(selectedDates.startDate)));
       const response = await fetch(`http://127.0.0.1:8888/api/order/available/${formatDate(new Date(selectedDates.startDate))}`, {
-        method: 'GET',
-        headers: {
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json',
-        },
+        method: 'GET'
+        
       });
 
       if (!response.ok) {

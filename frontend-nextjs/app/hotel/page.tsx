@@ -74,7 +74,7 @@ const Reservation = () => {
         <div className='bg-black w-full'>
             <div className='flex flex-col text-gray-200'>
                 {hotelData.map((hotel: any, index: number) => (
-                    <div className={`flex flex-row gap-3 ${index % 2 === 0 ? 'flex-row' : 'flex-row-reverse'}`}>
+                    <div key={hotel.id} className={`flex flex-row gap-3 ${index % 2 === 0 ? 'flex-row' : 'flex-row-reverse'}`}>
                         <img
                             src="https://files.ayana.com/r/kv-02_VoyjOw_3200x0.webp" // Replace with your image URL
                             alt="Ocean View Room"
