@@ -2,6 +2,7 @@
   {
     "name": "Grand Plaza Hotel",
     "city": "Jakarta",
+    "image_url": "https://files.ayana.com/r/kv-01_tzhxlQ_3200x0.webp",
     "address": "Jl. Sudirman No. 123, Jakarta",
     "phone_number": "021 12345678",
     "email": "contact@grandplazahotel.com",
@@ -11,6 +12,7 @@
   {
     "name": "Sunset Resort",
     "city": "Bali",
+    "image_url": "https://files.ayana.com/r/kv-02_VoyjOw_3200x0.webp",
     "address": "Jl. Pantai Kuta, Bali",
     "phone_number": "0361 2345678",
     "email": "info@sunsetresortbali.com",
@@ -20,6 +22,7 @@
   {
     "name": "Mountain View Hotel",
     "city": "Bandung",
+    "image_url": "https://files.ayana.com/r/kv-03_mj-2wA_3200x0.webp",
     "address": "Jl. Dago No. 99, Bandung",
     "phone_number": "022 7654321",
     "email": "contact@mountainviewhotelbandung.com",
@@ -29,6 +32,7 @@
   {
     "name": "Ocean Breeze Inn",
     "city": "Surabaya",
+    "image_url": "https://files.ayana.com/r/kv-04_q63pkQ_3200x0.webp",
     "address": "Jl. Laut No. 56, Surabaya",
     "phone_number": "031 9876543",
     "email": "reservations@oceanbreezeinn.com",
@@ -38,6 +42,7 @@
   {
     "name": "City Center Hotel",
     "city": "Yogyakarta",
+    "image_url": "https://files.ayana.com/r/kv-04_q63pkQ_3200x0.webp",
     "address": "Jl. Malioboro No. 100, Yogyakarta",
     "phone_number": "0274 1122334",
     "email": "info@citycenterhotelyogya.com",

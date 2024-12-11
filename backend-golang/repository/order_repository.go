@@ -94,7 +94,7 @@ func (r *orderRepository) GetOrderByUserId(ctx context.Context, tx *gorm.DB, req
 	var count int64
 
 	if req.PerPage == 0 {
-		req.PerPage = 10
+		req.PerPage = 40
 	}
 
 	if req.Page == 0 {

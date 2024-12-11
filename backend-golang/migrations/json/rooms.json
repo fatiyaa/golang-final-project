@@ -3,6 +3,7 @@
       "hotel_id": 1,
       "name": "Standard Room 101",
       "type": "STANDARD",
+      "image_url": "https://bookings.ayana.com/_next/image?url=https%3A%2F%2Fs3.ap-southeast-1.amazonaws.com%2Fcms-asset.ayana.com%2FFull_Ocean_View_Room_bathroom_1740x978_min_f514475994.png&w=1920&q=75&dpl=dpl_EQzEgNWoWKgWMFrPAHn6BKgNSSWW",
       "base_price": 150000,
       "capacity": 5,
       "description": "A comfortable standard room for 2 people."
@@ -11,6 +12,7 @@
       "hotel_id": 1,
       "name": "Deluxe Room 102",
       "type": "DELUXE",
+      "image_url": "https://bookings.ayana.com/_next/image?url=https%3A%2F%2Fs3.ap-southeast-1.amazonaws.com%2Fcms-asset.ayana.com%2F870x489_KMD_Full_Ocean_View_Room2_fc499e53d7.jpg&w=1920&q=75&dpl=dpl_EQzEgNWoWKgWMFrPAHn6BKgNSSWW",
       "base_price": 250000,
       "capacity": 3,
       "description": "A luxurious deluxe room with a city view for 3 people."
@@ -19,6 +21,7 @@
       "hotel_id": 2,
       "name": "Suite Room 201",
       "type": "SUITE",
+      "image_url": "https://bookings.ayana.com/_next/image?url=https%3A%2F%2Fs3.ap-southeast-1.amazonaws.com%2Fcms-asset.ayana.com%2FFull_Ocean_View_Room_min_1740x978_3baa92a9f4.png&w=1920&q=75&dpl=dpl_EQzEgNWoWKgWMFrPAHn6BKgNSSWW",
       "base_price": 500000,
       "capacity": 2,
       "description": "A spacious suite with modern amenities and a king-size bed."
@@ -27,6 +30,7 @@
       "hotel_id": 3,
       "name": "Presidential Room 301",
       "type": "PRESIDENTIAL",
+      "image_url": "https://bookings.ayana.com/_next/image?url=https%3A%2F%2Fs3.ap-southeast-1.amazonaws.com%2Fcms-asset.ayana.com%2F870x489_KMD_Full_Ocean_View_Room2_fc499e53d7.jpg&w=1920&q=75&dpl=dpl_EQzEgNWoWKgWMFrPAHn6BKgNSSWW",
       "base_price": 1000000,
       "capacity": 1,
       "description": "An extravagant presidential suite with luxury features."
@@ -35,6 +39,7 @@
       "hotel_id": 4,
       "name": "Deluxe Room 401",
       "type": "DELUXE",
+      "image_url": "https://bookings.ayana.com/_next/image?url=https%3A%2F%2Fs3.ap-southeast-1.amazonaws.com%2Fcms-asset.ayana.com%2FAKWB_Deluxe_Ocean_View_Room_3_1740x978_43094206a8.png&w=1920&q=75&dpl=dpl_EQzEgNWoWKgWMFrPAHn6BKgNSSWW",
       "base_price": 300000,
       "capacity": 4,
       "description": "A spacious deluxe room with a great view of the beach."
