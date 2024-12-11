@@ -170,23 +170,3 @@ func (c *orderController) DeleteOrder(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, res)
 }
 
-func (c *orderController) GetBookedDates(ctx *gin.Context) {
-	roomId := ctx.Param("room_id")
-
-	// Pastikan roomId valid sebelum melanjutkan
-	if roomId == "" {
-		res := utils.BuildResponseFailed(dto.MESSAGE_FAILED_GET_BOOKED_DATES, "Invalid room_id", nil)
-		ctx.JSON(http.StatusBadRequest, res)
-		return
-	}
-
-	blockedDates, err := c.orderService.GetBookedDates(ctx.Request.Context(), roomId)
-	if err != nil {
-		res := utils.BuildResponseFailed(dto.MESSAGE_FAILED_GET_BOOKED_DATES, err.Error(), nil)
-		ctx.JSON(http.StatusBadRequest, res)
-		return
-	}
-
-	res := utils.BuildResponseSuccess(dto.MESSAGE_SUCCESS_GET_BOOKED_DATES, blockedDates)
-	ctx.JSON(http.StatusOK, res)
-}
