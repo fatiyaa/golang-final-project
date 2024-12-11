@@ -88,8 +88,8 @@ const RoomDetails = () => {
           adults: Number(guestList.adults),
         children: Number(guestList.children ?? 0),
         infants: Number(guestList.infants ?? 0),
-          date_start: '2024-12-01',
-          date_end: '2024-12-02',
+          date_start: formatDateApi(dates.startDate),
+          date_end: formatDateApi(dates.endDate),
           note: note,
         },
         {
@@ -104,6 +104,11 @@ const RoomDetails = () => {
     } catch (error) {
       console.error(error);
     }
+  };
+
+  const formatDateApi = (dateString: string) => {
+    const date = new Date(dateString);
+    return ${date.getFullYear()}-${(date.getMonth() + 1).toString().padStart(2, '0')}-${date.getDate().toString().padStart(2,'0')};
   };
 
   const formatDate = (dateString: string) => {

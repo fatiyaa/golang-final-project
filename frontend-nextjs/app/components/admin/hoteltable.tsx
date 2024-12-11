@@ -299,7 +299,7 @@ const HotelTable: React.FC<HotelTable> = ({
                                             </svg>
                                         </button>
                                         {dropdownOpen === hotel.id && (
-                                            <div id="floatingModal" className="absolute mt-2 bg-white shadow-lg rounded-lg w-40 right-0 z-10  divide-y divide-gray-100 s dark:bg-gray-700 dark:divide-gray-600">
+                                            <div id="floatingModal" className="absolute mt-2 bg-white shadow-lg rounded-lg w-40 right-0 z-30  divide-y divide-gray-100 s dark:bg-gray-700 dark:divide-gray-600">
                                                 <ul className="py-1 text-sm text-gray-700 dark:text-gray-200 flex flex-col justify-center items-center">
                                                     <li>
                                                         <button
