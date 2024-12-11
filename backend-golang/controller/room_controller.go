@@ -119,16 +119,3 @@ func (c *roomController) GetRoomById(ctx *gin.Context) {
 	res := utils.BuildResponseSuccess(dto.MESSAGE_SUCCESS_GET_ROOM, result)
 	ctx.JSON(http.StatusOK, res)
 }
-
-func (c *roomController) DeleteRoom(ctx *gin.Context) {
-	roomId := ctx.Param("id")
-	err := c.roomService.DeleteRoom(ctx.Request.Context(), roomId)
-	if err != nil {
-		res := utils.BuildResponseFailed(dto.MESSAGE_FAILED_DELETE_ROOM, err.Error(), nil)
-		ctx.JSON(http.StatusBadRequest, res)
-		return
-	}
-
-	res := utils.BuildResponseSuccess(dto.MESSAGE_SUCCESS_DELETE_ROOM, nil)
-	ctx.JSON(http.StatusOK, res)
-}
