@@ -55,7 +55,7 @@ func (r *orderRepository) GetAllOrder(ctx context.Context, tx *gorm.DB, req dto.
 	var count int64
 
 	if req.PerPage == 0 {
-		req.PerPage = 10
+		req.PerPage = 40
 	}
 
 	if req.Page == 0 {

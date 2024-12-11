@@ -2,8 +2,8 @@ package service
 
 import (
 	"context"
+	"math/rand"
 	"fmt"
-
 	"github.com/fatiyaa/golang-final-project/dto"
 	"github.com/fatiyaa/golang-final-project/entity"
 	"github.com/fatiyaa/golang-final-project/repository"
@@ -36,6 +36,18 @@ func NewHotelService(hotelRepo repository.HotelRepository) HotelService {
 func (s *hotelService) RegisterHotel(ctx context.Context, req dto.HotelCreateRequest) (dto.HotelCreateResponse, error) {
 	var filename string
 
+	var HOTEL_IMAGE = []string{
+		"https://files.ayana.com/r/kv-01_tzhxlQ_3200x0.webp",
+		"https://files.ayana.com/r/kv-02_VoyjOw_3200x0.webp",
+		"https://files.ayana.com/r/kv-03_mj-2wA_3200x0.webp",
+		"https://files.ayana.com/r/kv-04_q63pkQ_3200x0.webp",
+		"https://files.ayana.com/r/kv-06_7Q5wxg_3200x0.webp",
+		"https://files.ayana.com/r/kv-08_GJnD4A_3200x0.webp",
+		"https://files.ayana.com/r/kv-07_sTvHlA_3200x0.webp",
+		"https://files.ayana.com/r/kv-05__E57Hw_3200x0.webp",
+		"https://files.ayana.com/r/kv-09_DbdsLg_3200x0.webp",
+	}
+
 	if req.Image != nil {
 		imageId := uuid.New()
 		ext := utils.GetExtensions(req.Image.Filename)
@@ -44,6 +56,9 @@ func (s *hotelService) RegisterHotel(ctx context.Context, req dto.HotelCreateReq
 		if err := utils.UploadFile(req.Image, filename); err != nil {
 			return dto.HotelCreateResponse{}, err
 		}
+	} else{
+		randomInt := rand.Intn(len(HOTEL_IMAGE))
+		filename = HOTEL_IMAGE[randomInt]
 	}
 
 	hotel := entity.Hotel{
