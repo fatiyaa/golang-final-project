@@ -351,7 +351,7 @@ const HotelTable: React.FC<HotelTable> = ({
                                 alt="Room View" 
                                 loading="lazy" 
                                 decoding="async" 
-                                src='https://files.ayana.com/r/kv-05__E57Hw_3200x0.webp'
+                                src={selectedHotel ? selectedHotel.image_url : ''}
                                 className="h-[120px] w-[200px] rounded-lg object-cover object-center"
                             >
                             </img>

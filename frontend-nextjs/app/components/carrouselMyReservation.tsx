@@ -47,7 +47,7 @@ const SwiperBookingList: React.FC<SwiperBookingListProps> = ({
           className="bg-white rounded-t-lg rounded-b-md flex flex-col gap-1 shadow-lg h-[27rem]"
         >
           <img
-            src="https://files.ayana.com/r/kv-09_DbdsLg_3200x0.webp"
+            src={booking.room[0].image_url}
             alt=""
             width={360}
             height={80}

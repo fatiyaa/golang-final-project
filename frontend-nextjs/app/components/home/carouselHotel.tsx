@@ -22,18 +22,26 @@ const imagesNumbered = {
   9: 'https://files.ayana.com/r/kv-09_DbdsLg_3200x0.webp',
 };
 
-// Function to render stars
 const renderStars = (rating: number) => {
-  const fullStars = Math.floor(rating);
-  const halfStar = rating % 1 >= 0.5 ? 1 : 0;
-  const emptyStars = 5 - fullStars - halfStar;
+  // Ensure the rating is a valid number and not NaN
+  if (isNaN(rating) || rating < 0) {
+    return '';
+  }
 
+  // Calculate the full, half, and empty stars
+  const fullStars = Math.max(0, Math.floor(rating));  // Full stars
+  const halfStar = rating % 1 >= 0.5 ? 1 : 0;       // Half star
+  const emptyStars = Math.max(0, 5 - fullStars - halfStar);  // Empty stars
+
+  // Create the arrays for the stars
   const fullStarsArray = new Array(fullStars).fill('★');
   const halfStarsArray = new Array(halfStar).fill('☆');
   const emptyStarsArray = new Array(emptyStars).fill('☆');
 
+  // Combine all star arrays into a single string
   return [...fullStarsArray, ...halfStarsArray, ...emptyStarsArray].join(' ');
 };
+
 
 export default function HotelCarousel() {
   const [hotelData, setHotelData] = useState([]);
@@ -75,7 +83,7 @@ export default function HotelCarousel() {
               <div className="bg-black rounded-3xl">
                 {/* Correct image source access */}
                 <img
-                  src={imagesNumbered[hotel.id]}
+                  src={hotel.image_url}
                   className="h-[450px] w-full rounded-t-3xl object-cover object-center"
                   alt={`Hotel image for ${hotel.id}`}
                 />
@@ -84,7 +92,9 @@ export default function HotelCarousel() {
                 <div>
                   <h1 className="uppercase font-bold text-[1.3rem]">{hotel.name}</h1>
                   <p className="text-[0.9rem] font-semibold">{hotel.address} · {hotel.city}</p>
-                  <p className="text-[0.9rem] font-semibold">Rating: {renderStars(hotel.rating)} {hotel.rating}</p>
+                  <span className="text-[0.9rem] font-semibold">Rating: </span>
+                  <span className="text-[0.9rem] font-semibold text-orange-400">{renderStars(hotel.rating)}</span>
+                  <span className="text-[0.9rem] font-semibold"> {hotel.rating}</span>
                 </div>
                 <div>
                   <p className="text-[1.1rem]">{hotel.description}</p>

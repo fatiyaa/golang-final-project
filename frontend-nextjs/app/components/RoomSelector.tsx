@@ -72,7 +72,6 @@ export default function RoomSelector({
     <header className="bg-white dark:bg-gray-800 shadow-sm">
       <div className="container mx-auto px-4 flex justify-between items-center py-4">
         <h1 className="text-xl font-semibold text-gray-800 dark:text-white flex-shrink-0">
-          Your Logo
         </h1>
 
         <div className="flex items-center space-x-4">

@@ -304,7 +304,7 @@ const RoomTable: React.FC<RoomTable> = ({
                                                 </svg>
                                             </button>
                                             {dropdownOpen === room.id && (
-                                                <div id="floatingModal" className="absolute mt-2 bg-white shadow-lg rounded-lg w-40 right-0 z-30  divide-y divide-gray-100 s dark:bg-gray-700 dark:divide-gray-600">
+                                                <div id="floatingModal" className="absolute mt-2 bg-white shadow-lg rounded-lg w-40 right-0 z-50  divide-y divide-gray-100 dark:bg-gray-700 dark:divide-gray-600">
                                                     <ul className="py-1 text-sm text-gray-700 dark:text-gray-200 flex flex-col justify-center items-center">
                                                         <li>
                                                             <button
@@ -356,7 +356,7 @@ const RoomTable: React.FC<RoomTable> = ({
                                 alt="Room View" 
                                 loading="lazy" 
                                 decoding="async" 
-                                src='https://files.ayana.com/r/kv-05__E57Hw_3200x0.webp'
+                                src={selectedRoom?.image_url}
                                 className="h-[120px] w-[200px] rounded-lg object-cover object-center"
                             >
                             </img>

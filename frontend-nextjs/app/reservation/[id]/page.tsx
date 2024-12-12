@@ -101,6 +101,7 @@ const RoomDetails = () => {
       );
       console.log(response.data);  // Log the response data
       setIsFloating(false);  // Close the floating modal
+      router.push('/myreservation');  // Redirect to reservation page
     } catch (error) {
       console.error(error);
     }
@@ -155,7 +156,7 @@ const RoomDetails = () => {
   return (
     <div className='flex flex-col items-center mt-4'>
       <img
-            src="https://files.ayana.com/r/kv-05__E57Hw_3200x0.webp"  
+            src={roomDetails.image_url} 
             alt="Ocean View Room"
             width={360}
             height={80}
@@ -240,7 +241,7 @@ const RoomDetails = () => {
                   alt="Room View" 
                   loading="lazy" 
                   decoding="async" 
-                  src='https://files.ayana.com/r/kv-05__E57Hw_3200x0.webp'
+                  src={roomDetails.image_url}
                   className="h-[120px] w-[200px] rounded-lg object-cover object-center"
                   >
                   </img>

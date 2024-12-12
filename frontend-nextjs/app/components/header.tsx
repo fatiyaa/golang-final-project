@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Cookies from 'js-cookie';
+import Image from 'next/image'
 
 export default function Header({ isFixed }: { isFixed: boolean }) {
   const router = useRouter();
@@ -36,14 +37,14 @@ export default function Header({ isFixed }: { isFixed: boolean }) {
     >
       <nav className="bg-white border-gray-200 px-4 lg:px-6 py-2.5 dark:bg-gray-800">
         <div className="flex flex-wrap justify-between items-center mx-auto max-w-screen-xl">
-          <a href="https://flowbite.com" className="flex items-center">
+          <a  className="flex items-center">
             <img
-              src="https://flowbite.com/docs/images/logo.svg"
-              className="mr-3 h-6 sm:h-9"
-              alt="Flowbite Logo"
+              src="/logo_black.png"
+              className="mr-3 h-8 sm:h-14"
+              alt=" Logo"
             />
             <span className="self-center text-xl font-semibold whitespace-nowrap dark:text-white">
-              Flowbite
+              Grand Palace
             </span>
           </a>
           {!hasToken ? (
@@ -111,8 +112,7 @@ export default function Header({ isFixed }: { isFixed: boolean }) {
               <li>
                 <a
                   href="/"
-                  className="block py-2 pr-4 pl-3 text-white rounded border-gray-100 lg:bg-transparent lg:border-gray-100 lg:p-0 dark:text-white"
-                  aria-current="page"
+                  className="block py-2 pr-4 pl-3 text-gray-700 rounded border-gray-100 lg:bg-transparent lg:border-gray-100 lg:p-0 dark:text-white lg:hover:text-primary-700 lg:dark:hover:text-white dark:hover:bg-gray-700 dark:hover:text-white lg:dark:hover:bg-transparent dark:border-gray-700"
                 >
                   Home
                 </a>

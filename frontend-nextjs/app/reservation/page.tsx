@@ -97,7 +97,7 @@ const Reservation = () => {
           <div className="relative w-full sm:w-full md:w-4/5 lg:w-3/4 xl:w-2/3 bg-white rounded-lg shadow dark:bg-gray-800 dark:border-gray-700 flex items-center cursor-pointer hover:shadow-lg transition-shadow duration-300">
             {/* Image with rounded left corners */}
             <img
-              src="https://files.ayana.com/r/kv-02_VoyjOw_3200x0.webp"  // Replace with your image URL
+              src={room.image_url}  // Replace with your image URL
               alt="Ocean View Room"
               width={360}
               height={80}

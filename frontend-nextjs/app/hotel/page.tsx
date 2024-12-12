@@ -76,7 +76,7 @@ const Reservation = () => {
                 {hotelData.map((hotel: any, index: number) => (
                     <div key={hotel.id} className={`flex flex-row gap-3 ${index % 2 === 0 ? 'flex-row' : 'flex-row-reverse'}`}>
                         <img
-                            src="https://files.ayana.com/r/kv-02_VoyjOw_3200x0.webp" // Replace with your image URL
+                            src={hotel.image_url}
                             alt="Ocean View Room"
                             className="h-[30rem] w-[50rem] object-center"
                         />
@@ -92,7 +92,7 @@ const Reservation = () => {
                                 <p className='text-xl font-semibold'>Contact :</p>
                                 <div className='flex items-center'>
                                     <img 
-                                        src={iconUrl}
+                                        src='https://cdn-icons-png.flaticon.com/512/14453/14453589.png'
                                         alt="Email Icon" 
                                         width="24" 
                                         height="24" 
@@ -102,7 +102,7 @@ const Reservation = () => {
                                 </div>
                                 <div className='flex items-center'>
                                     <img 
-                                        src="https://cdn-icons-png.flaticon.com/512/3891/3891977.png" 
+                                        src="https://cdn-icons-png.flaticon.com/512/6596/6596115.png" 
                                         alt="Phone Icon" 
                                         width="24" 
                                         height="24" 
